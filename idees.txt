@@ -1,0 +1,12 @@
+
+- Shooter vue du dessus où on peut dégommer des ennemis avec style, on
+  peut se téléporter dans un certain rayons pour esquiver les
+  projectiles enemis. Lorsque on se téléporte on a un effet slowmo
+  pour nous aider a choisir correctement l'endroit de
+  téléportation. Lorsque on se téléporte on téléporte avec nous les
+  entités qui sont dans un certain périmètre.
+
+- Melanger génétiquement des individus en les faisant se téléporter
+  ensemble façon "la mouche"
+
+
