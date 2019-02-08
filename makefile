@@ -1,8 +1,15 @@
-GCC = g++
-GCC_FLAGS = -Wall -std=c++11 -I "D:\Librairies\Cpp\SFML-2.4.2\include"
-GCC_LIBS = -L "D:\Librairies\Cpp\SFML-2.4.2\lib" -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+include makefile_vars
+export
 
-DLL = "D:\Librairies\Cpp\SFML-2.4.2\bin"
+GCC = g++
+GCC_FLAGS = -Wall -std=c++11 -I $(I_DIR)
+GCC_LIBS = -L $(L_DIR) \
+	-lsfml-graphics \
+	-lsfml-window \
+	-lsfml-system \
+	-lsfml-audio
+
+DLL = $(DLL_DIR)
 
 BUILD_DIR = .\build
 SOURCES_DIR = .\sources
@@ -27,3 +34,8 @@ objects_dir:
 
 build_dir:
 	if not exist "$(BUILD_DIR)" mkdir $(BUILD_DIR)
+
+clean:
+	del $(BUILD_DIR)\*.exe
+	del $(BUILD_DIR)\*.dll
+	del $(OBJECTS_DIR)\*.o
