@@ -50,8 +50,15 @@ Inputs get_inputs(sf::Window& window)
 	
 	// Recuperation de la direction2
 	vector direction2(0,0);
-	{
-		
+	{		
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+			direction2.y -= 1;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+			direction2.y += 1;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+			direction2.x -= 1;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+			direction2.x += 1;
 	}
 	if (sf::Joystick::isConnected(0) and
 		sf::Joystick::hasAxis(0, sf::Joystick::Z) and
