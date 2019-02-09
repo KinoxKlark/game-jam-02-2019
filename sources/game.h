@@ -4,14 +4,18 @@
 #include "inputs.h"
 
 struct Entity {
+	
+	// Todo(Sam): C'est des pixels par secondes, et des
+	// pixels par secondes par secondes, a voir pour
+	// uniformiser en game unit ou autre
     vector pos;
     vector speed;
-    r32 acceleration = 1;
-    r32 max_speed = 10;
+    r32 max_speed;
+    r32 acceleration;
 };
 
 
-// TODO(Sam): Mettre �a dans une partie debug
+// TODO(Sam): Mettre ca dans une partie debug
 struct DebugInfos {
 	i32 frame_length_milliseconds;
 };
@@ -23,5 +27,6 @@ struct GameData {
 };
 
 void game_tick(GameData& data, Inputs& inputs);
+void game_init(GameData& data);
 
 #endif

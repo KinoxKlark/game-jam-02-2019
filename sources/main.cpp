@@ -13,6 +13,7 @@ int main()
 	const i32 FRAME_LENGTH_MILLISECONDS(1000.f/FRAME_PER_SECONDS);
 
 	GameData data;
+	game_init(data);
 	
 	sf::RenderWindow window(sf::VideoMode(GAME_WIDTH, GAME_HEIGHT), "Game");
 
@@ -32,7 +33,7 @@ int main()
 
             // Recuperation des inputs
 		    Inputs inputs = get_inputs(window);
-			inputs.delta_time = FRAME_LENGTH_MILLISECONDS;
+			inputs.delta_time = FRAME_LENGTH_MILLISECONDS / 1000.f;
 			
 			// Game Logique
 			game_tick(data, inputs);

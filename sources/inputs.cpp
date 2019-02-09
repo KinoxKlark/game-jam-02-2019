@@ -1,5 +1,5 @@
 #include "inputs.h"
-#include <cmath>
+#include "intrinsic.h"
 
 Inputs get_inputs(sf::Window& window)
 {
@@ -30,10 +30,6 @@ Inputs get_inputs(sf::Window& window)
 			direction.x -= 1;
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 			direction.x += 1;
-
-		r32 norme(std::sqrt((direction.x * direction.x) +
-							(direction.y * direction.y)));
-		inputs.direction = direction / (norme != 0.0 ? norme : 1);
 	}
 	if (sf::Joystick::isConnected(0) and
 		sf::Joystick::hasAxis(0, sf::Joystick::X) and
@@ -45,15 +41,12 @@ Inputs get_inputs(sf::Window& window)
 		direction.y += sf::Joystick::getAxisPosition(0, sf::Joystick::Y)/100.f;
 		if(std::abs(direction.x) < 0.1f) direction.x = 0;
 		if(std::abs(direction.y) < 0.1f) direction.y = 0;
-
-		r32 norme(std::sqrt((direction.x * direction.x) +
-							(direction.y * direction.y)));
-
-		if(norme > 1.f)
-			direction /= norme;
-		
-		inputs.direction = direction;
 	}
+	r32 norm_direction(norm(direction));
+	if(norm_direction > 1.f)
+		direction /= norm_direction;
+		
+	inputs.direction = direction;
     
 	return inputs;
 }
