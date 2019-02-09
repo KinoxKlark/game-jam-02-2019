@@ -38,7 +38,9 @@ int main()
 			game_tick(data, inputs);
 			
 			// Game Render
-			render(data,window);
+			render(data,window,inputs);
+			// TODO(Sam): Faut enlever les input d'ici, je l'ai mis seulement pour qu'on
+			// puisse afficher dans le debug. Faudra a terme trouver une meilleur solution
 
 			// Quit game
 			if(inputs.quit_game)

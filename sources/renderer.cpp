@@ -2,7 +2,7 @@
 
 #include <cstdio>
 
-void render(GameData const& data, sf::RenderWindow& window)
+void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs)
 {
 	// TODO(Sam): Fair un vrai système d'asset
 	sf::CircleShape circle(50);
@@ -17,7 +17,10 @@ void render(GameData const& data, sf::RenderWindow& window)
 	}
 
 	char debug_string[100];
-	std::sprintf(debug_string, "FPS: %f", 1000.f/data.debug_infos.frame_length_milliseconds);
+	std::sprintf(debug_string, "FPS: %f\nDirection.x = %f\nDirection.y = %f",
+				 1000.f/data.debug_infos.frame_length_milliseconds,
+				 inputs.direction.x,
+				 inputs.direction.y);
     sf::Text text(debug_string, font, 18);
 	text.setFillColor(sf::Color::Black);
 
