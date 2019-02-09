@@ -3,6 +3,7 @@
 
 
 #include "intrinsic.h"
+#include "inputs.h"
 #include "game.h"
 #include "renderer.h"
 
@@ -13,7 +14,6 @@ int main()
 	const i32 FRAME_LENGTH_MILLISECONDS(1000.f/FRAME_PER_SECONDS);
 
 	GameData data;
-	Inputs inputs;
 	
 	sf::RenderWindow window(sf::VideoMode(GAME_WIDTH, GAME_HEIGHT), "Game");
 
@@ -32,42 +32,19 @@ int main()
 			last_timestamp = current_timestamp;
 
             // Recuperation des inputs
-			sf::Event e;
-			inputs.direction = vector(0,0);
-
-			while(window.pollEvent(e))
-			{
-				
-				if(e.type == sf::Event::Closed)
-					window.close();
-				//Plus rapide pour fermer la fenetre, je préfère ça qu'interrompre le programme, il faudra le gerer proprement
-				if (e.type == sf::Event::KeyPressed)
-				{
-					if (e.key.code == sf::Keyboard::Escape)
-						window.close();
-					
-					if (e.key.code == sf::Keyboard::Up)
-						inputs.direction.y -= 1;
-					if (e.key.code == sf::Keyboard::Down)
-						inputs.direction.y += 1;
-					if (e.key.code == sf::Keyboard::Left)
-						inputs.direction.x -= 1;
-					if (e.key.code == sf::Keyboard::Right)
-						inputs.direction.x += 1;
-				}
-			}
-			r32 norme(sqrt((inputs.direction.x * inputs.direction.x) + (inputs.direction.y * inputs.direction.y)));
-			if(norme)
-				inputs.direction /= norme;
-
-
+		    Inputs inputs = get_inputs(window);
+			
 			// Game Logique
 			game_tick(data, inputs);
 			
 			// Game Render
 			render(data,window);
 
-			
+			// Quit game
+			if(inputs.quit_game)
+			{
+				window.close();
+			}
 		}
 	}
 

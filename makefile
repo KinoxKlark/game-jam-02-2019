@@ -27,8 +27,12 @@ OBJECTS_DIR = ./objects
 
 all: game
 
-game: main.o game.o renderer.o copy_dll build_dir
-	$(GCC) $(GCC_FLAGS) $(OBJECTS_DIR)/main.o $(OBJECTS_DIR)/game.o $(OBJECTS_DIR)/renderer.o -o build/game.exe $(GCC_LIBS)
+game: main.o game.o renderer.o inputs.o copy_dll build_dir
+	$(GCC) $(GCC_FLAGS) $(OBJECTS_DIR)/main.o \
+				 		$(OBJECTS_DIR)/game.o \
+					    $(OBJECTS_DIR)/renderer.o \
+						$(OBJECTS_DIR)/inputs.o \
+			-o build/game.exe $(GCC_LIBS)
 
 main.o: $(SOURCES_DIR)/main.cpp $(SOURCES_DIR)/intrinsic.h objects_dir
 	$(GCC) $(GCC_FLAGS) -c $(SOURCES_DIR)/main.cpp -o $(OBJECTS_DIR)/main.o
@@ -38,6 +42,10 @@ game.o: $(SOURCES_DIR)/game.cpp $(SOURCES_DIR)/game.h $(SOURCES_DIR)/intrinsic.h
 
 renderer.o: $(SOURCES_DIR)/renderer.cpp $(SOURCES_DIR)/renderer.h $(SOURCES_DIR)/intrinsic.h  objects_dir
 	$(GCC) $(GCC_FLAGS) -c $(SOURCES_DIR)/renderer.cpp -o $(OBJECTS_DIR)/renderer.o
+
+inputs.o: $(SOURCES_DIR)/inputs.cpp $(SOURCES_DIR)/inputs.h $(SOURCES_DIR)/intrinsic.h  objects_dir
+	$(GCC) $(GCC_FLAGS) -c $(SOURCES_DIR)/inputs.cpp -o $(OBJECTS_DIR)/inputs.o
+
 
 copy_dll: build_dir
 ifeq ($(OS), win32)

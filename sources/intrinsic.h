@@ -2,6 +2,7 @@
 #define INTRINSIC_H
 
 #include <stdint.h>
+#include <SFML/System/Vector2.hpp>
 
 typedef float r32;
 typedef double r64;
@@ -15,5 +16,7 @@ typedef int8_t  u8;
 typedef uint16_t u16;
 typedef uint32_t u32;
 typedef uint64_t u64;
+
+typedef sf::Vector2<r32> vector;
 
 #endif
