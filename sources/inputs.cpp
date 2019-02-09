@@ -20,27 +20,8 @@ Inputs get_inputs(sf::Window& window)
 
 	
 	// Recuperation de la direction
-	if (sf::Joystick::isConnected(0) and
-		sf::Joystick::hasAxis(0, sf::Joystick::X) and
-		sf::Joystick::hasAxis(0, sf::Joystick::Y))
+	vector direction(0,0);
 	{
-		vector direction(0,0);
-		direction.x = sf::Joystick::getAxisPosition(0, sf::Joystick::X)/100.f;
-		direction.y = sf::Joystick::getAxisPosition(0, sf::Joystick::Y)/100.f;
-		if(std::abs(direction.x) < 0.1f) direction.x = 0;
-		if(std::abs(direction.y) < 0.1f) direction.y = 0;
-
-		r32 norme(std::sqrt((direction.x * direction.x) +
-							(direction.y * direction.y)));
-
-		if(norme > 1.f)
-			direction /= norme;
-		
-		inputs.direction = direction;
-	}
-	else
-	{
-		vector direction(0,0);
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 			direction.y -= 1;
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
@@ -54,6 +35,25 @@ Inputs get_inputs(sf::Window& window)
 							(direction.y * direction.y)));
 		inputs.direction = direction / (norme != 0.0 ? norme : 1);
 	}
+	if (sf::Joystick::isConnected(0) and
+		sf::Joystick::hasAxis(0, sf::Joystick::X) and
+		sf::Joystick::hasAxis(0, sf::Joystick::Y))
+	{
+		// Note: Ici on ecrase pas direction, on ajoute juste a l'ancienne calculee avec
+		// les touches car on veux pouvoir utiliser les deux controllers a la fois.
+		direction.x += sf::Joystick::getAxisPosition(0, sf::Joystick::X)/100.f;
+		direction.y += sf::Joystick::getAxisPosition(0, sf::Joystick::Y)/100.f;
+		if(std::abs(direction.x) < 0.1f) direction.x = 0;
+		if(std::abs(direction.y) < 0.1f) direction.y = 0;
 
+		r32 norme(std::sqrt((direction.x * direction.x) +
+							(direction.y * direction.y)));
+
+		if(norme > 1.f)
+			direction /= norme;
+		
+		inputs.direction = direction;
+	}
+    
 	return inputs;
 }
