@@ -7,6 +7,7 @@
 struct Inputs {
     vector direction;
 	bool quit_game;
+    r32 delta_time;
 };
 
 Inputs get_inputs(sf::Window& window);

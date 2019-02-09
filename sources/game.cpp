@@ -1,8 +1,9 @@
 #include "game.h"
 
 #include <iostream>
+#include <cmath>
 
-// TODO(Sam): Nettoyer ça !
+// TODO(Sam): Nettoyer ï¿½a !
 void game_init(GameData& data)
 {
 	//data.player = Enitiy();
@@ -11,11 +12,18 @@ void game_init(GameData& data)
 
 void game_tick(GameData& data, Inputs& inputs)
 {
-  //TODO : Handle combinaison of Horizontal and Vertical move
 
-  data.player.speed += inputs.direction;
+  data.player.speed += inputs.direction * inputs.delta_time - data.player.speed * (r32)0.1;//* data.player.acceleration 
+
+  // data.player.speed *= 0.9;
+
+  r32 speed_norm = sqrt(data.player.speed.x*data.player.speed.x + data.player.speed.y*data.player.speed.y);
+
+  //limits the speed
+  if(speed_norm > data.player.max_speed)
+    data.player.speed *= data.player.max_speed / speed_norm;
   
-  data.player.pos += data.player.speed;
+  data.player.pos += data.player.speed * inputs.delta_time;
 
   return;
 }

@@ -1,5 +1,4 @@
 #include <SFML/Graphics.hpp>
-#include <cmath>
 
 
 #include "intrinsic.h"
@@ -33,6 +32,7 @@ int main()
 
             // Recuperation des inputs
 		    Inputs inputs = get_inputs(window);
+			inputs.delta_time = FRAME_LENGTH_MILLISECONDS;
 			
 			// Game Logique
 			game_tick(data, inputs);

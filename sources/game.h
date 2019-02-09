@@ -6,10 +6,12 @@
 struct Entity {
     vector pos;
     vector speed;
+    r32 acceleration = 1;
+    r32 max_speed = 0.5;
 };
 
 
-// TODO(Sam): Mettre ça dans une partie debug
+// TODO(Sam): Mettre ï¿½a dans une partie debug
 struct DebugInfos {
 	i32 frame_length_milliseconds;
 };
