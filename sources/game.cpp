@@ -13,7 +13,7 @@ void game_init(GameData& data)
 void game_tick(GameData& data, Inputs& inputs)
 {
 
-  data.player.speed += inputs.direction * inputs.delta_time - data.player.speed * (r32)0.1;//* data.player.acceleration 
+  data.player.speed += (inputs.direction * data.player.acceleration - data.player.speed * (r32)0.1) * inputs.delta_time;//* data.player.acceleration 
 
   // data.player.speed *= 0.9;
 

@@ -7,7 +7,7 @@ struct Entity {
     vector pos;
     vector speed;
     r32 acceleration = 1;
-    r32 max_speed = 0.5;
+    r32 max_speed = 10;
 };
 
 
