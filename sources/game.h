@@ -4,20 +4,21 @@
 #include <SFML/System/Vector2.hpp>
 typedef sf::Vector2<r32> vector;
 
-enum HorizontalMove {
-    HM_NONE,
-    HM_LEFT,
-    HM_RIGHT
-};
+// enum HorizontalMove {
+//     HM_NONE,
+//     HM_LEFT,
+//     HM_RIGHT
+// };
 
-enum VerticalMove {
-    VM_NONE,
-    VM_UP,
-    VM_DOWN
-};
+// enum VerticalMove {
+//     VM_NONE,
+//     VM_UP,
+//     VM_DOWN
+// };
 
 struct Entity {
     vector pos;
+    vector speed;
 };
 
 
@@ -33,12 +34,10 @@ struct GameData {
 };
 
 // TODO(Sam): Est ce que c'est le bon endroit pour �a ?
-struct Events {
-    HorizontalMove h_move;
-    VerticalMove v_move;
+struct Inputs {
+    vector direction;
 };
 
-void game_tick(GameData& data, Events& events);
-void game_init(GameData& data);
+void game_tick(GameData& data, Inputs& inputs);
 
 #endif
