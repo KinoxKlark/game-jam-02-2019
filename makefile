@@ -41,9 +41,9 @@ renderer.o: $(SOURCES_DIR)/renderer.cpp $(SOURCES_DIR)/renderer.h $(SOURCES_DIR)
 
 copy_dll: build_dir
 ifeq ($(OS), win32)
-	copy $(DLL)/*.dll $(BUILD_DIR)
+	copy $(DLL)\*.dll $(BUILD_DIR)
 endif
-	
+
 
 objects_dir:
 ifeq ($(OS), win32)
@@ -61,9 +61,9 @@ endif
 
 clean:
 ifeq ($(OS), win32)
-	del $(BUILD_DIR)/*.exe
-	del $(BUILD_DIR)/*.dll
-	del $(OBJECTS_DIR)/*.o
+	del $(BUILD_DIR)\*.exe
+	del $(BUILD_DIR)\*.dll
+	del $(OBJECTS_DIR)\*.o
 else
 	rm $(BUILD_DIR)/*.exe
 	rm $(OBJECTS_DIR)/*.o
