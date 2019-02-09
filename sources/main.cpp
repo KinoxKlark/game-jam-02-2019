@@ -3,7 +3,6 @@
 
 #include "intrinsic.h"
 #include "game.h"
-#include "renderer.h"
 
 int main()
 {
@@ -28,7 +27,6 @@ int main()
 		last_timestamp = current_timestamp;
 		while(elapsed_time.asMilliseconds() > FRAME_LENGTH_MILLISECONDS)
 		{
-			// Gestion du timing
 #if 0 
 			elapsed_time -= FRAME_LENGTH_MILLISECONDS;
 #else
@@ -37,6 +35,7 @@ int main()
 
             // R�cup�ration des inputs
 			sf::Event e;
+			events.h_move = HMove::right;
 			while(window.pollEvent(e))
 			{
 				if(e.type == sf::Event::Closed)
@@ -48,7 +47,7 @@ int main()
 			game_tick(data, events);
 			
 			// Game Render
-			render(data, window);
+			// ...
 			
 		}
 	}
