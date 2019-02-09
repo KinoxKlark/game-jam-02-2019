@@ -36,3 +36,6 @@ makefile_vars
 
 # Emacs
 *~
+
+# Vscode
+.vscode/*
