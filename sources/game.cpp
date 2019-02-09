@@ -1,12 +1,17 @@
 #include "game.h"
 
-#include <iostream> // TODO: A enlever, c'ï¿½tait pour le test
+#include <iostream>
+
+// TODO(Sam): Nettoyer ça !
+void game_init(GameData& data)
+{
+	//data.player = Enitiy();
+	data.debug_infos.frame_length_milliseconds = 0;
+}
 
 void game_tick(GameData& data, Events& events)
 {
   //TODO : Handle combinaison of Horizontal and Vertical move
-  // TODO(David): Commence ici
-  std::cout << "Game Tick!" << "\n";
 
   //Horizontal Move
   if(events.h_move == HM_RIGHT)

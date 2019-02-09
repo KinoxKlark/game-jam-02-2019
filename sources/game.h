@@ -20,8 +20,16 @@ struct Entity {
     vector pos;
 };
 
+
+// TODO(Sam): Mettre ça dans une partie debug
+struct DebugInfos {
+	i32 frame_length_milliseconds;
+};
+
 struct GameData {
     Entity player;
+
+	DebugInfos debug_infos;
 };
 
 // TODO(Sam): Est ce que c'est le bon endroit pour ï¿½a ?
@@ -31,5 +39,6 @@ struct Events {
 };
 
 void game_tick(GameData& data, Events& events);
+void game_init(GameData& data);
 
 #endif
