@@ -9,6 +9,7 @@ Inputs get_inputs(sf::Window& window)
 	inputs.direction1 = vector(0,0);
 	inputs.quit_game = false;
 	inputs.charging_tp = false;
+	inputs.shooting = false;
 
 	while(window.pollEvent(event))
 	{
@@ -17,6 +18,8 @@ Inputs get_inputs(sf::Window& window)
 		   (event.type == sf::Event::KeyPressed and
 			event.key.code == sf::Keyboard::Escape))
 			inputs.quit_game = true;
+		if(event.type == sf::Event::KeyPressed and event.key.code == sf::Keyboard::Space)
+			inputs.shooting = true;
 	}
 
 	

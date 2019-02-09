@@ -2,6 +2,14 @@
 #define GAME_H
 #include "intrinsic.h"
 #include "inputs.h"
+#include <vector>
+
+struct Projectile {
+    r32 life_time;
+    r32 speed;
+    vector pos;
+    vector direction;
+};
 
 struct Entity {
 	
@@ -27,6 +35,7 @@ struct DebugInfos {
 
 struct GameData {
     Entity player;
+    std::vector<Projectile> projectiles;
 
 	DebugInfos debug_infos;
 };

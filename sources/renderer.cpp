@@ -4,10 +4,20 @@
 
 void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs)
 {
+	//Center the view on the player
+	sf::View view(sf::FloatRect(0,0, window.getSize().x, window.getSize().y));
+	view.setCenter(data.player.pos.x,data.player.pos.y);
+	window.setView(view);
+
 	// TODO(Sam): Fair un vrai syst�me d'asset
-	sf::CircleShape circle(50);
-	circle.setOrigin(50,50);
-	circle.setFillColor(sf::Color::Red);
+	sf::CircleShape player(50);
+	player.setOrigin(50,50);
+	player.setFillColor(sf::Color::Red);
+	player.setPosition(data.player.pos.x,data.player.pos.y);
+
+	sf::CircleShape projectile(10);
+	projectile.setOrigin(10,10);
+	projectile.setFillColor(sf::Color::Blue);
 
 	// TODO(Sam): Mettre �a au bon endroit
     sf::Font font;
@@ -30,14 +40,19 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
     sf::Text text(debug_string, font, 18);
 	text.setFillColor(sf::Color::Black);
 
-	circle.setPosition(data.player.pos.x,data.player.pos.y);
 	// end tmp
 
 
 	window.clear(sf::Color::White);
 	
 	// Le rendu va ici...
-	window.draw(circle);
+	window.draw(player);
+
+	for(auto& p: data.projectiles)
+	{
+		projectile.setPosition(p.pos.x,p.pos.y);
+		window.draw(projectile);
+	}
 
 	window.draw(text);
 	

@@ -25,7 +25,6 @@ int main()
 	
 	while(window.isOpen())
 	{
-		
 		sf::Time current_timestamp(clock.getElapsedTime());
 		elapsed_time = current_timestamp - last_timestamp;
 	    if(elapsed_time.asMilliseconds() > FRAME_LENGTH_MILLISECONDS)
@@ -39,7 +38,7 @@ int main()
 			
 			// Game Logique
 			game_tick(data, inputs);
-			
+
 			// Game Render
 			render(data,window,inputs);
 			// TODO(Sam): Faut enlever les input d'ici, je l'ai mis seulement pour qu'on
