@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <cmath>
 
 
 #include "intrinsic.h"
@@ -12,7 +13,7 @@ int main()
 	const i32 FRAME_LENGTH_MILLISECONDS((r32)1/(r32)FRAME_PER_SECONDS);
 
 	GameData data;
-	Events events;
+	Inputs inputs;
 	
 	sf::RenderWindow window(sf::VideoMode(GAME_WIDTH, GAME_HEIGHT), "Game");
 
@@ -36,10 +37,11 @@ int main()
 
             // R�cup�ration des inputs
 			sf::Event e;
-			events.h_move = HM_RIGHT;
-			events.v_move = VM_DOWN;
+			inputs.direction = vector(0,0);
+
 			while(window.pollEvent(e))
 			{
+				
 				if(e.type == sf::Event::Closed)
 					window.close();
 				//Plus rapide pour fermer la fenetre, je préfère ça qu'interrompre le programme, il faudra le gerer proprement
@@ -47,12 +49,24 @@ int main()
 				{
 					if (e.key.code == sf::Keyboard::Escape)
 						window.close();
+					
+					if (e.key.code == sf::Keyboard::Up)
+						inputs.direction.y -= 1;
+					if (e.key.code == sf::Keyboard::Down)
+						inputs.direction.y += 1;
+					if (e.key.code == sf::Keyboard::Left)
+						inputs.direction.x -= 1;
+					if (e.key.code == sf::Keyboard::Right)
+						inputs.direction.x += 1;
 				}
 			}
+			r32 norme(sqrt((inputs.direction.x * inputs.direction.x) + (inputs.direction.y * inputs.direction.y)));
+			if(norme)
+				inputs.direction /= norme;
 
 
 			// Game Logique
-			game_tick(data, events);
+			game_tick(data, inputs);
 			
 			// Game Render
 			// ...
