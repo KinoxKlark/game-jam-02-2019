@@ -16,13 +16,17 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 		return;
 	}
 
-	char debug_string[100];
-	std::sprintf(debug_string, "FPS: %f \nDirection1.x = %f \nDirection1.y = %f \nDirection2.x = %f \nDirection2.y = %f",
+	char debug_string[1024];
+	std::sprintf(debug_string, "FPS: %f \nDirection1.x = %f \nDirection1.y = %f \nDirection2.x = %f \nDirection2.y = %f \nMouse.x = %d \nMouse.y = %d \nWidth = %d \nHeight = %d",
 				 1000.f/data.debug_infos.frame_length_milliseconds,
 				 inputs.direction1.x,
 				 inputs.direction1.y,
 				 inputs.direction2.x,
-				 inputs.direction2.y);
+				 inputs.direction2.y,
+				 inputs.mouse_pos_tmp.x,
+				 inputs.mouse_pos_tmp.y,
+				 inputs.winsize_tmp.x,
+				 inputs.winsize_tmp.y);
     sf::Text text(debug_string, font, 18);
 	text.setFillColor(sf::Color::Black);
 

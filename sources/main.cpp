@@ -16,6 +16,8 @@ int main()
 	game_init(data);
 	
 	sf::RenderWindow window(sf::VideoMode(GAME_WIDTH, GAME_HEIGHT), "Game");
+	window.setMouseCursorGrabbed(true);
+	// window.setMouseCursorVisible(false);
 
 	sf::Clock clock;
 	sf::Time last_timestamp(clock.getElapsedTime());
