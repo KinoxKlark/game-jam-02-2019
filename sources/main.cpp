@@ -33,7 +33,7 @@ int main()
 			elapsed_time = sf::Time::Zero;
 #endif
 
-            // R�cup�ration des inputs
+            // Recuperation des inputs
 			sf::Event e;
 			events.h_move = HMove::right;
 			while(window.pollEvent(e))
