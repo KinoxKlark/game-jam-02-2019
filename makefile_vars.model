@@ -1,3 +1,9 @@
-L_DIR = "D:\Librairies\Cpp\SFML-2.4.2\lib"
-I_DIR = "D:\Librairies\Cpp\SFML-2.4.2\include"
-DLL_DIR = "D:\Librairies\Cpp\SFML-2.4.2\bin"
+OS = "win32"
+L_DIR = "D:/Librairies/Cpp/SFML-2.4.2/lib"
+I_DIR = "D:/Librairies/Cpp/SFML-2.4.2/include"
+DLL_DIR = "D:/Librairies/Cpp/SFML-2.4.2/bin"
+
+#OS = "linux"
+#L_DIR = ""
+#I_DIR = "/usr/include"
+#DLL_DIR = "/usr/lib/x86_64-linux-gnu"

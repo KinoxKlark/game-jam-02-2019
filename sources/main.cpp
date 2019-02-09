@@ -1,4 +1,4 @@
-#include <SFML\Graphics.hpp>
+#include <SFML/Graphics.hpp>
 
 
 #include "intrinsic.h"
@@ -33,7 +33,7 @@ int main()
 			elapsed_time = sf::Time::Zero;
 #endif
 
-            // Récupération des inputs
+            // Rï¿½cupï¿½ration des inputs
 			sf::Event e;
 			while(window.pollEvent(e))
 			{

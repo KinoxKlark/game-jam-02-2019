@@ -1,6 +1,8 @@
 #ifndef INTRINSIC_H
 #define INTRINSIC_H
 
+#ifdef WIN32
+
 typedef float r32;
 typedef double r64;
 
@@ -14,5 +16,21 @@ typedef unsigned __int16 u16;
 typedef unsigned __int32 u32;
 typedef unsigned __int64 u64;
 
+#else
+
+typedef float r32;
+typedef double r64;
+
+typedef char i8;
+typedef short int i16;
+typedef int i32;
+typedef long int i64;
+
+typedef unsigned char  u8;
+typedef unsigned short int u16;
+typedef unsigned int u32;
+typedef unsigned long int u64;
+
+#endif
 
 #endif
