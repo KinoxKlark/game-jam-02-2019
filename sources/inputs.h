@@ -5,9 +5,13 @@
 #include <SFML/Window.hpp>
 
 struct Inputs {
-    vector direction;
-	bool quit_game;
+    vector direction1,
+		direction2;
     r32 delta_time;
+	
+	bool quit_game;
+    bool primaire_start, primaire_end;
+	bool secondaire_start, secondaire_end;
 };
 
 Inputs get_inputs(sf::Window& window);

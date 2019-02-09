@@ -21,7 +21,7 @@ void game_tick(GameData& data, Inputs& inputs)
 	r32 masse(60.f); // 60kg
 	r32 friction(0.5f);
 	vector acceleration =
-		inputs.direction * data.player.acceleration -
+		inputs.direction1 * data.player.acceleration -
 		data.player.speed * friction;
 
 	data.player.speed += masse * acceleration * inputs.delta_time;

@@ -2,7 +2,7 @@ include makefile_vars
 export
 
 GCC = g++
-GCC_FLAGS = -Wall -std=c++11 -I $(I_DIR)
+GCC_FLAGS = -Wall -std=c++11 -g -Os -I $(I_DIR)
 
 ifeq ($(OS), win32)
 GCC_LIBS = -L $(L_DIR)
