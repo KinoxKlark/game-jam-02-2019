@@ -3,6 +3,7 @@
 
 #include "intrinsic.h"
 #include "game.h"
+#include "renderer.h"
 
 int main()
 {
@@ -35,11 +36,18 @@ int main()
 
             // Recuperation des inputs
 			sf::Event e;
-			events.h_move = HMove::right;
+			events.h_move = HM_RIGHT;
+			events.v_move = VM_DOWN;
 			while(window.pollEvent(e))
 			{
 				if(e.type == sf::Event::Closed)
 					window.close();
+				//Plus rapide pour fermer la fenetre, je préfère ça qu'interrompre le programme, il faudra le gerer proprement
+				if (e.type == sf::Event::KeyPressed)
+				{
+					if (e.key.code == sf::Keyboard::Escape)
+						window.close();
+				}
 			}
 
 
@@ -48,6 +56,7 @@ int main()
 			
 			// Game Render
 			// ...
+			render(data,window);
 			
 		}
 	}
