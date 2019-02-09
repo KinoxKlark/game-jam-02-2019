@@ -13,6 +13,8 @@ struct Inputs {
     bool primaire_start, primaire_end;
 	bool secondaire_start, secondaire_end;
     bool charging_tp;
+	sf::Vector2i mouse_pos_tmp;
+	sf::Vector2u winsize_tmp;
 };
 
 Inputs get_inputs(sf::Window& window);

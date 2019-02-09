@@ -54,27 +54,39 @@ Inputs get_inputs(sf::Window& window)
 	
 	// Recuperation de la direction2
 	vector direction2(0,0);
-	{		
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-			direction2.y -= 1;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-			direction2.y += 1;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-			direction2.x -= 1;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-			direction2.x += 1;
-	}
+#if 1
 	if (sf::Joystick::isConnected(0) and
 		sf::Joystick::hasAxis(0, sf::Joystick::Z) and
 		sf::Joystick::hasAxis(0, sf::Joystick::R))
 	{
-		// Note: Ici on ecrase pas direction2, on ajoute juste a l'ancienne calculee avec
-		// les touches car on veux pouvoir utiliser les deux controllers a la fois.
 		direction2.x += sf::Joystick::getAxisPosition(0, sf::Joystick::Z)/100.f;
 		direction2.y += sf::Joystick::getAxisPosition(0, sf::Joystick::R)/100.f;
 		if(std::abs(direction2.x) < 0.1f) direction2.x = 0;
 		if(std::abs(direction2.y) < 0.1f) direction2.y = 0;
 	}
+	else
+	{
+		sf::Vector2u window_size(window.getSize());
+		sf::Vector2i mouse_pos(sf::Mouse::getPosition(window));
+
+		inputs.mouse_pos_tmp = mouse_pos;
+		inputs.winsize_tmp = window_size;
+		
+		direction2.x += (mouse_pos.x - (i32)window_size.x/2);
+		direction2.y += (mouse_pos.y - (i32)window_size.y/2);
+	}
+#else
+	{
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+			direction2.y = -1;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+			direction2.y = 1;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+			direction2.x = -1;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+			direction2.x = 1;
+	}
+#endif
 	r32 norm_direction2(norm(direction2));
 	if(norm_direction2 > 1.f)
 		direction2 /= norm_direction2;
