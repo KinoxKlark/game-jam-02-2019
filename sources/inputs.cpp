@@ -8,6 +8,7 @@ Inputs get_inputs(sf::Window& window)
 
 	inputs.direction1 = vector(0,0);
 	inputs.quit_game = false;
+	inputs.charging_tp = false;
 
 	while(window.pollEvent(event))
 	{
@@ -30,6 +31,9 @@ Inputs get_inputs(sf::Window& window)
 			direction1.x -= 1;
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 			direction1.x += 1;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::C))
+			inputs.charging_tp = true;
+		
 	}
 	if (sf::Joystick::isConnected(0) and
 		sf::Joystick::hasAxis(0, sf::Joystick::X) and

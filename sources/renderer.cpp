@@ -4,19 +4,19 @@
 
 void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs)
 {
-	// TODO(Sam): Fair un vrai système d'asset
+	// TODO(Sam): Fair un vrai systï¿½me d'asset
 	sf::CircleShape circle(50);
 	circle.setOrigin(50,50);
 	circle.setFillColor(sf::Color::Red);
 
-	// TODO(Sam): Mettre ça au bon endroit
+	// TODO(Sam): Mettre ï¿½a au bon endroit
     sf::Font font;
     if (!font.loadFromFile("assets/fonts/ConnectionII.otf"))
 	{
 		return;
 	}
 
-	char debug_string[100];
+	char debug_string[1024];
 	std::sprintf(debug_string, "FPS: %f \nDirection1.x = %f \nDirection1.y = %f \nDirection2.x = %f \nDirection2.y = %f",
 				 1000.f/data.debug_infos.frame_length_milliseconds,
 				 inputs.direction1.x,

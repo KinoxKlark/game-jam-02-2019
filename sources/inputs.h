@@ -12,6 +12,7 @@ struct Inputs {
 	bool quit_game;
     bool primaire_start, primaire_end;
 	bool secondaire_start, secondaire_end;
+    bool charging_tp;
 };
 
 Inputs get_inputs(sf::Window& window);

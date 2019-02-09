@@ -12,6 +12,11 @@ struct Entity {
     vector speed;
     r32 max_speed;
     r32 acceleration;
+    r32 masse;
+
+    r32 tp_charge;
+    r32 tp_charging_speed;
+    r32 tp_max_distance;
 };
 
 
