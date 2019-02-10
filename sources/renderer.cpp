@@ -29,6 +29,11 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 		data.player.pos.x + data.player.direction_shoot.x*50,
 		data.player.pos.y + data.player.direction_shoot.y*50);
 
+
+	sf::CircleShape ennemies(50);
+	ennemies.setOrigin(50,50);
+	ennemies.setFillColor(sf::Color::Black);
+
 	sf::CircleShape projectile(10);
 	projectile.setOrigin(10,10);
 	projectile.setFillColor(sf::Color::Blue);
@@ -53,6 +58,12 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 	window.clear(sf::Color::White);
 	
 	// Le rendu va ici...
+	for(auto& e: data.ennemies)
+	{
+		ennemies.setPosition(e.pos.x,e.pos.y);
+		window.draw(ennemies);
+	}
+
 	window.draw(player);
 	window.draw(player_direction);
 
@@ -61,7 +72,7 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 		projectile.setPosition(p.pos.x,p.pos.y);
 		window.draw(projectile);
 	}
-	
+
 	if(data.player.tp_charge > 0)
 	{
 		sf::CircleShape tp_target(20);
