@@ -7,9 +7,12 @@
 // TODO(Sam): Nettoyer ca !
 void game_init(GameData& data)
 {
-	Gun player_gun;
-	player_gun.type = GT_pistol;
-	player_gun.projectile_type = PT_pistol_bullet;
+	Weapon player_weapon;
+	player_weapon.type = GT_pistol;
+	player_weapon.projectile_type = PT_pistol_bullet;
+	player_weapon.cooldown = 0.2;
+	player_weapon.used = false;
+	player_weapon.waited_time = 0;
 	// Player
 	data.player.to_destroy = false;
 	data.player.pos.x = 300;
@@ -23,8 +26,10 @@ void game_init(GameData& data)
 	data.player.tp_max_distance = 500;
 	data.player.orientation.x = 0;
 	data.player.orientation.y = 1;
-	data.player.gun = player_gun;
+	data.player.weapon = player_weapon;
 	data.player.asset_type = AssetType::PLAYER;
+	data.player.life_max = 20;
+	data.player.life = 20;
 	
 	data.camera.pos.x = data.player.pos.x;
 	data.camera.pos.y = data.player.pos.y;
@@ -45,6 +50,7 @@ void game_init(GameData& data)
 		e.acceleration = 100.f * i;
 		e.masse = 60.f;// 60kg
 		e.collision_radius = 45.f;
+		e.life_max = 5;
 		e.life = 1;
 
 		e.to_destroy = false;
@@ -133,13 +139,23 @@ void game_tick(GameData& data, Inputs& inputs)
 	r32 direction2_length(norm(inputs.direction2));
 	if(direction2_length > 0.1) // TODO(Sam): Quelle sensibilit� ?
 		data.player.orientation = inputs.direction2 / direction2_length;
-	if(inputs.shooting)
-	{
 
+	if(data.player.weapon.used)
+		data.player.weapon.waited_time += world_delta_time;
+
+	if(data.player.weapon.waited_time > data.player.weapon.cooldown)
+	{
+		data.player.weapon.waited_time = 0;
+		data.player.weapon.used = false;
+	}
+
+	if(inputs.shooting and !data.player.weapon.used)
+	{
+			data.player.weapon.used = true;
 			// TODO(Sam): Est ce qu'on fera pas une fonction pour cr�er ces entit�s ?
-			Projectile p;
-			if(data.player.gun.type == GT_pistol)
+			if(data.player.weapon.type == GT_pistol)
 			{
+				Projectile p;
 				p.type = PT_pistol_bullet;
 				p.life_time = 4;
 				p.speed = 200;

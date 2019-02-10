@@ -18,11 +18,7 @@ Inputs get_inputs(sf::Window& window)
 		   (event.type == sf::Event::KeyPressed and
 			event.key.code == sf::Keyboard::Escape))
 			inputs.quit_game = true;
-
-		// TODO(Sam): On ne devrait surtout pas utiliesr de Event::KeyPressed pour
-		// le gameplay je laisse en attendant d'avoir changé
-		if(event.type == sf::Event::KeyPressed and event.key.code == sf::Keyboard::Space)
-			inputs.shooting = true;
+			
 	}
 
 	// Action Primaire
@@ -111,6 +107,9 @@ Inputs get_inputs(sf::Window& window)
 	if(norm_direction2 > 1.f)
 		direction2 /= norm_direction2;
     inputs.direction2 = direction2;
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+			inputs.shooting = true;
 
 	return inputs;
 }
