@@ -20,8 +20,8 @@ void game_init(GameData& data)
 	data.player.direction_shoot.y = 1;
 	data.player.asset_type = AssetType::PLAYER;
 	
-	data.camera.pos.x = 0;
-	data.camera.pos.y = 0;
+	data.camera.pos.x = data.player.pos.x;
+	data.camera.pos.y = data.player.pos.y;
 	data.camera.speed.x = 0;
 	data.camera.speed.y = 0;
 	
