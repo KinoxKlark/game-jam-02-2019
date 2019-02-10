@@ -51,7 +51,7 @@ void game_init(GameData& data)
 		e.masse = 60.f;// 60kg
 		e.collision_radius = 45.f;
 		e.life_max = 5;
-		e.life = 1;
+		e.life = 5;
 
 		e.to_destroy = false;
 
