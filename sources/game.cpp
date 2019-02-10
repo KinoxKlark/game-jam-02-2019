@@ -114,14 +114,19 @@ void game_tick(GameData& data, Inputs& inputs)
 
 	// Camera
 	{
-		vector direction_player = data.player.pos - data.camera.pos;
-		r32 distance_player = norm(direction_player);
-		distance_player = distance_player < 0.01 ? 1.f : distance_player;
+		// Camera focus
+		data.camera.focus_pos = data.player.pos;
+
+		
+		// Camera mouvement
+		vector direction_focus = data.camera.focus_pos - data.camera.pos;
+		r32 distance_player = norm(direction_focus);
+		distance_focus = distance_focus < 0.01 ? 1.f : distance_focus;
 		const r32 camera_masse(20.f); // kg
 		const r32 attraction_factor(.1f);
 		const r32 camera_friction(0.5f);
 
-		vector acceleration = camera_masse*(attraction_factor*direction_player*distance_player
+		vector acceleration = camera_masse*(attraction_factor*direction_focus*distance_focus
 			- camera_friction*data.camera.speed);
 
 		// TOOD(Sam): Est ce qu'on utilise la vitesse du jeu ou du monde?

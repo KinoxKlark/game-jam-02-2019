@@ -36,6 +36,7 @@ struct Entity {
 struct Camera {
     vector pos;
 	vector speed;
+	vector focus_pos;
 };
 
 
