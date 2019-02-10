@@ -7,14 +7,28 @@
 
 #include <vector>
 
+enum GunType {
+    GT_pistol
+};
+
+enum ProjectileType {
+    PT_pistol_bullet
+};
+
 // TODO(Sam): On devrait pas merge avec le concepte d'entity ?
 struct Projectile {
+    ProjectileType type;
     r32 life_time;
     r32 speed;
     vector pos;
     vector direction;
-
+    r32 dommage;
     AssetType asset_type;
+};
+
+struct Gun {
+    GunType type;
+    ProjectileType projectile_type;
 };
 
 struct Entity {
@@ -22,7 +36,7 @@ struct Entity {
     vector pos;
     vector speed;
 	vector orientation;
-    
+
     r32 max_speed;
     r32 acceleration;
     r32 masse;
@@ -34,6 +48,8 @@ struct Entity {
     r32 tp_charge;
     r32 tp_charging_speed;
     r32 tp_max_distance;
+
+    Gun gun;
 
     AssetType asset_type;
 };
