@@ -18,8 +18,9 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 	view.setCenter(data.camera.pos.x, data.camera.pos.y);
 	window.setView(view);
 
-	// TODO(Sam): Fair un vrai syst�me d'asset
-	sf::CircleShape player(50), player_direction(10);
+	// TODO(Sam): Fair un vrai systeme d'asset
+	sf::CircleShape player(50),
+		player_direction(10);
 	player.setOrigin(50,50);
 	player_direction.setOrigin(10,10);
 	player.setFillColor(sf::Color::Red);
@@ -29,6 +30,10 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 		data.player.pos.x + data.player.direction_shoot.x*50,
 		data.player.pos.y + data.player.direction_shoot.y*50);
 
+	sf::CircleShape camera_focus(5);
+	camera_focus.setOrigin(5,5);
+	camera_focus.setFillColor(sf::Color::Black);
+	camera_focus.setPosition(data.camera.focus_pos.x, data.camera.focus_pos.y);
 
 	sf::CircleShape ennemies(50);
 	ennemies.setOrigin(50,50);
@@ -66,6 +71,7 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 
 	window.draw(player);
 	window.draw(player_direction);
+	window.draw(camera_focus);
 
 	for(auto& p: data.projectiles)
 	{

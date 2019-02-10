@@ -156,7 +156,22 @@ void game_tick(GameData& data, Inputs& inputs)
 	// Camera
 	{
 		// Camera focus
-		data.camera.focus_pos = data.player.pos;
+	    r32 direction2_length(norm(inputs.direction2));
+		r32 speed_factor(.1f);
+		vector marker_1(
+			data.player.pos+data.player.direction_shoot*100.f*direction2_length
+			+ data.player.speed*speed_factor);
+
+		vector marker_2(marker_1);
+		if(data.player.tp_charge > 0)
+		{
+			// TODO(Sam): On a ce code aussi dans render, peut être on veut garder
+			// la position du tp dans les data pour ne pas se répeter ?
+			marker_2 = data.player.pos + (data.player.tp_charge * inputs.direction1);
+		}
+
+		r32 k(0.75);
+		data.camera.focus_pos = (1.f-k)*marker_1+k*marker_2;
 
 		
 		// Camera mouvement
@@ -165,7 +180,7 @@ void game_tick(GameData& data, Inputs& inputs)
 		distance_focus = distance_focus < 0.01 ? 1.f : distance_focus;
 		const r32 camera_masse(20.f); // kg
 		const r32 attraction_factor(.1f);
-		const r32 camera_friction(0.5f);
+		const r32 camera_friction(0.9f);
 
 		vector acceleration = camera_masse*(attraction_factor*direction_focus*distance_focus
 			- camera_friction*data.camera.speed);
