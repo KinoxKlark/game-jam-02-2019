@@ -14,41 +14,43 @@ bool load_assets(Assets& assets)
 void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs)
 {
 	//lifebar
-	sf::RectangleShape life_bar_bg(sf::Vector2f(50, 5));
-	sf::RectangleShape life_bar_fg(sf::Vector2f(50, 5));
-	life_bar_bg.setOrigin(50,5);
-	life_bar_fg.setOrigin(50,5);
+	sf::RectangleShape life_bar_bg(sf::Vector2f(.5, .05));
+	sf::RectangleShape life_bar_fg(sf::Vector2f(.5, .05));
+	life_bar_bg.setOrigin(.5,.05);
+	life_bar_fg.setOrigin(.5,.05);
 	life_bar_bg.setFillColor(sf::Color::Cyan);
 	life_bar_fg.setFillColor(sf::Color::Blue);
 
-	//Center the view on the player
-	sf::View view(sf::FloatRect(0,0, window.getSize().x, window.getSize().y));
+	// Camera
+	r32 window_ratio = (r32)window.getSize().x / (r32)window.getSize().y;
+	sf::View view(sf::FloatRect(0,0, 10*window_ratio, 10));
 	view.setCenter(data.camera.pos.x, data.camera.pos.y);
 	window.setView(view);
 
 	// TODO(Sam): Fair un vrai systeme d'asset
-	sf::CircleShape player(50),
-		player_direction(10);
-	player.setOrigin(50,50);
-	player_direction.setOrigin(10,10);
+	r32 player_radius = .5f;
+	sf::CircleShape player(player_radius),
+		player_direction(.1);
+	player.setOrigin(player_radius,player_radius);
+	player_direction.setOrigin(.1,.1);
 	player.setFillColor(sf::Color::Red);
 	player_direction.setFillColor(sf::Color::Red);
 	player.setPosition(data.player.pos.x,data.player.pos.y);
 	player_direction.setPosition(
-		data.player.pos.x + data.player.orientation.x*50,
-		data.player.pos.y + data.player.orientation.y*50);
+		data.player.pos.x + data.player.orientation.x*player_radius,
+		data.player.pos.y + data.player.orientation.y*player_radius);
 
-	sf::CircleShape camera_focus(5);
-	camera_focus.setOrigin(5,5);
+	sf::CircleShape camera_focus(.05);
+	camera_focus.setOrigin(.05,.05);
 	camera_focus.setFillColor(sf::Color::Black);
 	camera_focus.setPosition(data.camera.focus_pos.x, data.camera.focus_pos.y);
 
-	sf::CircleShape ennemies(50);
-	ennemies.setOrigin(50,50);
+	sf::CircleShape ennemies(.5);
+	ennemies.setOrigin(.5,.5);
 	ennemies.setFillColor(sf::Color::Black);
 
-	sf::CircleShape projectile(10);
-	projectile.setOrigin(10,10);
+	sf::CircleShape projectile(.1);
+	projectile.setOrigin(.1,.1);
 	projectile.setFillColor(sf::Color::Blue);
 
 	// TODO(Sam): Une GUI qui tient la route...
@@ -63,7 +65,7 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 				 inputs.mouse_pos_tmp.y,
 				 inputs.winsize_tmp.x,
 				 inputs.winsize_tmp.y);
-    sf::Text text(debug_string, data.assets.font, 18);
+    sf::Text text(debug_string, data.assets.font, .18);
 	text.setFillColor(sf::Color::Black);
 
 	// end tmp
@@ -75,18 +77,22 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 	{
 		ennemies.setPosition(e.pos.x,e.pos.y);
 
-		life_bar_fg.setSize(sf::Vector2f(life_bar_bg.getSize().x * e.life / e.life_max, life_bar_bg.getSize().y));
-		life_bar_bg.setPosition(e.pos.x,e.pos.y - 60);
-		life_bar_fg.setPosition(e.pos.x,e.pos.y - 60);
+		life_bar_fg.setSize(
+			sf::Vector2f(life_bar_bg.getSize().x * e.life
+						 / e.life_max, life_bar_bg.getSize().y));
+		life_bar_bg.setPosition(e.pos.x,e.pos.y - .6);
+		life_bar_fg.setPosition(e.pos.x,e.pos.y - .6);
 
 		window.draw(ennemies);
 		window.draw(life_bar_bg);
 		window.draw(life_bar_fg);
 	}
 
-	life_bar_fg.setSize(sf::Vector2f(life_bar_bg.getSize().x * data.player.life / data.player.life_max, life_bar_bg.getSize().y));
-	life_bar_bg.setPosition(data.player.pos.x,data.player.pos.y - 60);
-	life_bar_fg.setPosition(data.player.pos.x,data.player.pos.y - 60);
+	life_bar_fg.setSize(
+		sf::Vector2f(life_bar_bg.getSize().x * data.player.life
+					 / data.player.life_max, life_bar_bg.getSize().y));
+	life_bar_bg.setPosition(data.player.pos.x,data.player.pos.y - .60);
+	life_bar_fg.setPosition(data.player.pos.x,data.player.pos.y - .60);
 
 	window.draw(player);
 	window.draw(life_bar_bg);
@@ -103,8 +109,8 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 
 	if(data.player.tp_charge > 0)
 	{
-		sf::CircleShape tp_target(20);
-		tp_target.setOrigin(20,20);
+		sf::CircleShape tp_target(.20);
+		tp_target.setOrigin(.20,.20);
 		tp_target.setFillColor(sf::Color::Green);
 		tp_target.setPosition(data.player.pos.x + (data.player.tp_charge * inputs.direction1.x),
 		data.player.pos.y + data.player.tp_charge * inputs.direction1.y);
