@@ -49,6 +49,7 @@ struct GameData {
     Entity player;
 	Camera camera;
     std::vector<Projectile> projectiles;
+    std::vector<Entity> ennemies;
 	r32 time_factor;
 
     Assets assets;

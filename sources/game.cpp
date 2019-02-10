@@ -25,7 +25,20 @@ void game_init(GameData& data)
 	
 	data.time_factor = 1.f;
 
-	// data.projectiles = std::vector<Projectile>();
+	data.projectiles = std::vector<Projectile>(500);
+	data.ennemies = std::vector<Entity>(500);
+
+	for(size_t i(0); i < 3; i++)
+	{
+		Entity e;
+		e.pos.x = data.player.pos.x + (i+2) * 500;
+		e.pos.y = data.player.pos.y;
+		e.max_speed = 500.f;
+		e.acceleration = 100.f * i;
+		e.masse = 60.f;// 60kg
+
+		data.ennemies.push_back(e);
+	}
 
 	// Debug
     data.debug_infos.frame_length_milliseconds = 0;
@@ -33,10 +46,35 @@ void game_init(GameData& data)
 
 void game_tick(GameData& data, Inputs& inputs)
 {
+	r32 friction(0.5f);//Can depend on the floor
+	r32 world_delta_time = data.time_factor*inputs.delta_time;
+	//Ennemies
+	{
+		for(auto& e: data.ennemies)
+		{
+			//Direction: Choose where they go -> AI?
+			vector direction = vector(data.player.pos - e.pos);
+
+			//moving
+			vector acceleration =
+				direction * e.acceleration -
+				e.speed * friction;
+
+			e.speed += e.masse * acceleration * world_delta_time;
+
+			r32 speed_norm = norm(e.speed);
+
+			//limits the speed
+			if(speed_norm > e.max_speed)
+				e.speed *= e.max_speed / speed_norm;
+		
+			e.pos += e.speed * world_delta_time;
+		}
+	}
 	// Slow motion
 	// TODO(Sam): Transition plus smooth
 	// C'est pour ce genre de test que le nom charging_tp n'est pas
-	// du tout adapté, ici ce qu'on veut dire c'est : si l'action
+	// du tout adaptï¿½, ici ce qu'on veut dire c'est : si l'action
 	// secondaire est en cours alors ralentir le temps
 	if(inputs.charging_tp == true)
 	{
@@ -46,7 +84,6 @@ void game_tick(GameData& data, Inputs& inputs)
 	{
 		data.time_factor = 1.f;
 	}
-	r32 world_delta_time = data.time_factor*inputs.delta_time;
 	
 	//teleportation
 	if(inputs.charging_tp == true)
@@ -65,7 +102,6 @@ void game_tick(GameData& data, Inputs& inputs)
 	}
 	
 	//moving
-	r32 friction(0.5f);
 	vector acceleration =
 		inputs.direction1 * data.player.acceleration -
 		data.player.speed * friction;
@@ -83,7 +119,7 @@ void game_tick(GameData& data, Inputs& inputs)
 	//shooting
 	if(inputs.shooting)
 	{
-		// TODO(Sam): Est ce qu'on fera pas une fonction pour créer ces entités ?
+		// TODO(Sam): Est ce qu'on fera pas une fonction pour crï¿½er ces entitï¿½s ?
 		Projectile p;
 		p.life_time = 4;
 		p.speed = 200;
