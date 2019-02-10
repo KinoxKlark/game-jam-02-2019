@@ -27,6 +27,8 @@ void game_init(GameData& data)
 	data.player.orientation.y = 1;
 	data.player.weapon = player_weapon;
 	data.player.asset_type = AssetType::PLAYER;
+	data.player.life_max = 20;
+	data.player.life = 20;
 	
 	data.camera.pos.x = data.player.pos.x;
 	data.camera.pos.y = data.player.pos.y;
@@ -47,6 +49,7 @@ void game_init(GameData& data)
 		e.acceleration = 100.f * i;
 		e.masse = 60.f;// 60kg
 		e.collision_radius = 45.f;
+		e.life_max = 5;
 		e.life = 1;
 
 		data.ennemies.push_back(e);

@@ -13,6 +13,14 @@ bool load_assets(Assets& assets)
 
 void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs)
 {
+	//lifebar
+	sf::RectangleShape life_bar_bg(sf::Vector2f(50, 5));
+	sf::RectangleShape life_bar_fg(sf::Vector2f(50, 5));
+	life_bar_bg.setOrigin(50,5);
+	life_bar_fg.setOrigin(50,5);
+	life_bar_bg.setFillColor(sf::Color::Cyan);
+	life_bar_fg.setFillColor(sf::Color::Blue);
+
 	//Center the view on the player
 	sf::View view(sf::FloatRect(0,0, window.getSize().x, window.getSize().y));
 	view.setCenter(data.camera.pos.x, data.camera.pos.y);
@@ -66,10 +74,24 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 	for(auto& e: data.ennemies)
 	{
 		ennemies.setPosition(e.pos.x,e.pos.y);
+
+		life_bar_fg.setSize(sf::Vector2f(life_bar_bg.getSize().x * e.life / e.life_max, life_bar_bg.getSize().y));
+		life_bar_bg.setPosition(e.pos.x,e.pos.y - 60);
+		life_bar_fg.setPosition(e.pos.x,e.pos.y - 60);
+
 		window.draw(ennemies);
+		window.draw(life_bar_bg);
+		window.draw(life_bar_fg);
 	}
 
+	life_bar_fg.setSize(sf::Vector2f(life_bar_bg.getSize().x * data.player.life / data.player.life_max, life_bar_bg.getSize().y));
+	life_bar_bg.setPosition(data.player.pos.x,data.player.pos.y - 60);
+	life_bar_fg.setPosition(data.player.pos.x,data.player.pos.y - 60);
+
 	window.draw(player);
+	window.draw(life_bar_bg);
+	window.draw(life_bar_fg);
+
 	window.draw(player_direction);
 	window.draw(camera_focus);
 
@@ -86,6 +108,7 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 		tp_target.setFillColor(sf::Color::Green);
 		tp_target.setPosition(data.player.pos.x + (data.player.tp_charge * inputs.direction1.x),
 		data.player.pos.y + data.player.tp_charge * inputs.direction1.y);
+
 		window.draw(tp_target);
 	}
 

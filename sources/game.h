@@ -46,11 +46,12 @@ struct Entity {
     r32 acceleration;
     r32 masse;
 	r32 collision_radius;
+    r32 life_max;
     r32 life;
 
 	// TODO(Sam): Est ce que les ennemis doivent avoir ca ?
 	// c'est probablement le signe qu'il faut qu'on revoie
-	// un jour le système d'entity
+	// un jour le systï¿½me d'entity
     r32 tp_charge;
     r32 tp_charging_speed;
     r32 tp_max_distance;
