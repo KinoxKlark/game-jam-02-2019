@@ -7,7 +7,7 @@
 
 #include <vector>
 
-enum GunType {
+enum WeaponType {
     GT_pistol
 };
 
@@ -26,9 +26,14 @@ struct Projectile {
     AssetType asset_type;
 };
 
-struct Gun {
-    GunType type;
+struct Weapon {
+    WeaponType type;
     ProjectileType projectile_type;
+
+    //used to avoid weapon spam.
+    r32 cooldown;
+    r32 waited_time;
+    bool used;
 };
 
 struct Entity {
@@ -47,7 +52,7 @@ struct Entity {
     r32 tp_charging_speed;
     r32 tp_max_distance;
 
-    Gun gun;
+    Weapon weapon;
 
     AssetType asset_type;
 };
