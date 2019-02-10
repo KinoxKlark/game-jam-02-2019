@@ -120,7 +120,7 @@ void game_tick(GameData& data, Inputs& inputs)
 		
 		// Camera mouvement
 		vector direction_focus = data.camera.focus_pos - data.camera.pos;
-		r32 distance_player = norm(direction_focus);
+		r32 distance_focus = norm(direction_focus);
 		distance_focus = distance_focus < 0.01 ? 1.f : distance_focus;
 		const r32 camera_masse(20.f); // kg
 		const r32 attraction_factor(.1f);
