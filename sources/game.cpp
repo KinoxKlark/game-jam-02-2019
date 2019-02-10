@@ -36,7 +36,7 @@ void game_init(GameData& data)
     data.player.is_rolling = false;
     data.player.rolling_duration = 0.5;
     data.player.time_spent_rolling = 0.f;
-	data.player.rolling_speed = 1200.f;
+	data.player.rolling_speed = 14.f;
 	
 	data.camera.pos.x = data.player.pos.x;
 	data.camera.pos.y = data.player.pos.y;
@@ -117,9 +117,9 @@ void game_tick(GameData& data, Inputs& inputs)
 		if(data.player.is_rolling)
 		{
 			data.player.time_spent_rolling += world_delta_time;
-			vector deviation = inputs.direction1 * data.player.rolling_speed * 0.1f;
+			// vector deviation = inputs.direction1 * data.player.rolling_speed * 0.5f;
 			vector rolling_speed = data.player.rolling_speed * data.player.orientation;
-			data.player.pos += ( rolling_speed + deviation ) * world_delta_time;
+			data.player.pos += ( rolling_speed) * world_delta_time;
 		}
 		else
 		{
