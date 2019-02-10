@@ -25,6 +25,8 @@ struct Entity {
     r32 acceleration;
     r32 masse;
 
+	vector direction_shoot;
+
     r32 tp_charge;
     r32 tp_charging_speed;
     r32 tp_max_distance;

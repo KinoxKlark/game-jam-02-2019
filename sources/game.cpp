@@ -16,8 +16,10 @@ void game_init(GameData& data)
 	data.player.tp_charge = 0;
 	data.player.tp_charging_speed = 300;
 	data.player.tp_max_distance = 500;
+	data.player.direction_shoot.x = 0;
+	data.player.direction_shoot.y = 1;
 	data.player.asset_type = AssetType::PLAYER;
-
+	
 	data.camera.pos.x = 0;
 	data.camera.pos.y = 0;
 	data.camera.speed.x = 0;
@@ -81,6 +83,9 @@ void game_tick(GameData& data, Inputs& inputs)
 	data.player.pos += data.player.speed * world_delta_time;
 
 	//shooting
+	r32 direction2_length(norm(inputs.direction2));
+	if(direction2_length > 0.1) // TODO(Sam): Quelle sensibilité ?
+		data.player.direction_shoot = inputs.direction2 / direction2_length;
 	if(inputs.shooting)
 	{
 		// TODO(Sam): Est ce qu'on fera pas une fonction pour créer ces entités ?
@@ -88,7 +93,7 @@ void game_tick(GameData& data, Inputs& inputs)
 		p.life_time = 4;
 		p.speed = 200;
 		p.pos = data.player.pos;
-		p.direction = inputs.direction2;
+		p.direction = data.player.direction_shoot;
 		p.asset_type = AssetType::PROJECTILE;
 		
 		data.projectiles.push_back(p);

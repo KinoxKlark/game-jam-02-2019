@@ -19,10 +19,15 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 	window.setView(view);
 
 	// TODO(Sam): Fair un vrai syst�me d'asset
-	sf::CircleShape player(50);
+	sf::CircleShape player(50), player_direction(10);
 	player.setOrigin(50,50);
+	player_direction.setOrigin(10,10);
 	player.setFillColor(sf::Color::Red);
+	player_direction.setFillColor(sf::Color::Red);
 	player.setPosition(data.player.pos.x,data.player.pos.y);
+	player_direction.setPosition(
+		data.player.pos.x + data.player.direction_shoot.x*50,
+		data.player.pos.y + data.player.direction_shoot.y*50);
 
 	sf::CircleShape projectile(10);
 	projectile.setOrigin(10,10);
@@ -49,6 +54,7 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 	
 	// Le rendu va ici...
 	window.draw(player);
+	window.draw(player_direction);
 
 	for(auto& p: data.projectiles)
 	{
