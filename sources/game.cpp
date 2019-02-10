@@ -232,7 +232,6 @@ void game_tick(GameData& data, Inputs& inputs)
 
 	// Projectiles
 	for(auto& projectile : data.projectiles)
-	for(size_t i(0); i < data.projectiles.size() ; i++)
 	{
 		if(projectile.life_time > 0)
 		{
