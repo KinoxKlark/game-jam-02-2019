@@ -19,6 +19,7 @@ void game_init(GameData& data)
 	data.player.max_speed = 1000.f;
 	data.player.acceleration = 1000.f;
 	data.player.masse = 60.f;// 60kg
+	data.player.collision_radius = 45.f;
 	data.player.tp_charge = 0;
 	data.player.tp_charging_speed = 300;
 	data.player.tp_max_distance = 500;
@@ -40,11 +41,12 @@ void game_init(GameData& data)
 	for(size_t i(0); i < 3; i++)
 	{
 		Entity e;
-		e.pos.x = data.player.pos.x + (i+2) * 500;
+		e.pos.x = data.player.pos.x + (i+1) * 100;
 		e.pos.y = data.player.pos.y;
 		e.max_speed = 500.f;
 		e.acceleration = 100.f * i;
 		e.masse = 60.f;// 60kg
+		e.collision_radius = 45.f;
 		e.life = 1;
 
 		data.ennemies.push_back(e);
@@ -58,29 +60,7 @@ void game_tick(GameData& data, Inputs& inputs)
 {
 	r32 friction(0.5f);//Can depend on the floor
 	r32 world_delta_time = data.time_factor*inputs.delta_time;
-	//Ennemies
-	{
-		for(auto& e: data.ennemies)
-		{
-			//Direction: Choose where they go -> AI?
-			vector direction = vector(data.player.pos - e.pos);
-
-			//moving
-			vector acceleration =
-				direction * e.acceleration -
-				e.speed * friction;
-
-			e.speed += e.masse * acceleration * world_delta_time;
-
-			r32 speed_norm = norm(e.speed);
-
-			//limits the speed
-			if(speed_norm > e.max_speed)
-				e.speed *= e.max_speed / speed_norm;
-		
-			e.pos += e.speed * world_delta_time;
-		}
-	}
+	
 	// Slow motion
 	// TODO(Sam): Transition plus smooth
 	// C'est pour ce genre de test que le nom charging_tp n'est pas
@@ -112,20 +92,43 @@ void game_tick(GameData& data, Inputs& inputs)
 	}
 	
 	//moving
-	vector acceleration =
-		inputs.direction1 * data.player.acceleration -
-		data.player.speed * friction;
+	{
+		vector acceleration =
+			inputs.direction1 * data.player.acceleration -
+			data.player.speed * friction;
 
-	data.player.speed += data.player.masse * acceleration * world_delta_time;
+		data.player.speed += data.player.masse * acceleration * world_delta_time;
 
-	r32 speed_norm = norm(data.player.speed);
+		r32 speed_norm = norm(data.player.speed);
 
-	//limits the speed
-	if(speed_norm > data.player.max_speed)
-		data.player.speed *= data.player.max_speed / speed_norm;
+		//limits the speed
+		if(speed_norm > data.player.max_speed)
+			data.player.speed *= data.player.max_speed / speed_norm;
   
-	data.player.pos += data.player.speed * world_delta_time;
+		vector wanted_pos = data.player.pos + data.player.speed * world_delta_time;
 
+#if 0		
+		for(auto& entity: data.ennemies)
+		{
+			vector wp_from_entity = wanted_pos - entity.pos;
+			r32 distance_final = norm(wp_from_entity);
+			
+			const r32 distance_between = entity.collision_radius + data.player.collision_radius;
+
+			if(distance_final < distance_between)
+			{
+				// TODO(Sam): Que se passe-t-il lors de la collision ?
+				// Touche par un ennemi ...
+
+				//vector push_direction = safe_normalise(wp_from_entity);
+				//wanted_pos = entity.pos + push_direction*distance_between;
+			}
+		}
+#endif		
+    	
+		data.player.pos = wanted_pos;
+	}
+	
 	//shooting
 	r32 direction2_length(norm(inputs.direction2));
 	if(direction2_length > 0.1) // TODO(Sam): Quelle sensibilit� ?
@@ -159,6 +162,7 @@ void game_tick(GameData& data, Inputs& inputs)
 			}
 	}
 
+	// Projectiles
 	for(size_t i(0); i < data.projectiles.size() ; i++)
 	{
 		if(data.projectiles[i].life_time > 0)
@@ -177,6 +181,67 @@ void game_tick(GameData& data, Inputs& inputs)
 
 	}
 
+	// Ennemis
+	{
+		for(auto& ennemi : data.ennemies)
+		{
+			vector direction = vector(data.player.pos - ennemi.pos);
+
+			//moving
+			vector acceleration =
+				direction * ennemi.acceleration -
+				ennemi.speed * friction;
+
+			ennemi.speed += ennemi.masse * acceleration * world_delta_time;
+
+			r32 speed_norm = norm(ennemi.speed);
+
+			//limits the speed
+			if(speed_norm > ennemi.max_speed)
+				ennemi.speed *= ennemi.max_speed / speed_norm;
+
+#if 0		// On met temporairement en pause les ennemis	
+			ennemi.pos += ennemi.speed * world_delta_time;
+#else
+			vector wanted_pos = ennemi.pos + ennemi.speed * world_delta_time;
+
+			for(auto& entity: data.ennemies)
+			{
+				if(&entity == &ennemi) continue;
+				
+				vector wp_from_entity = wanted_pos - entity.pos;
+				r32 distance_final = norm(wp_from_entity);
+			
+				const r32 distance_between = entity.collision_radius + ennemi.collision_radius;
+
+				if(distance_final < distance_between)
+				{
+					vector push_direction = safe_normalise(wp_from_entity);
+					wanted_pos = entity.pos + push_direction*distance_between;
+				}
+			}
+			// TODO(Sam): Il faut merger les deux, les collisions devrait etre testee
+			// sur les entites et pas seulement les ennemis...
+			if(true)
+			{
+				vector wp_from_entity = wanted_pos - data.player.pos;
+				r32 distance_final = norm(wp_from_entity);
+			
+				const r32 distance_between = data.player.collision_radius + ennemi.collision_radius;
+
+				if(distance_final < distance_between)
+				{
+					vector push_direction = safe_normalise(wp_from_entity);
+					wanted_pos = data.player.pos + push_direction*distance_between;
+				}
+			}
+    	
+			ennemi.pos = wanted_pos;
+#endif			
+		}
+	}
+
+	// TODO(Sam): On gere ca ici ?
 	for(size_t i(0); i < data.ennemies.size() ; i++)
 	{
 		if(data.ennemies[i].life <= 0)
