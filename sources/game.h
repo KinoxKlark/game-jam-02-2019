@@ -36,7 +36,8 @@ struct DebugInfos {
 struct GameData {
     Entity player;
     std::vector<Projectile> projectiles;
-
+	r32 time_factor;
+	
 	DebugInfos debug_infos;
 };
 

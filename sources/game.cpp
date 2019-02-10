@@ -17,6 +17,8 @@ void game_init(GameData& data)
 	data.player.tp_charging_speed = 300;
 	data.player.tp_max_distance = 500;
 
+	data.time_factor = 1.f;
+
 	// data.projectiles = std::vector<Projectile>();
 
 	// Debug
@@ -25,10 +27,25 @@ void game_init(GameData& data)
 
 void game_tick(GameData& data, Inputs& inputs)
 {
+	// Slow motion
+	// TODO(Sam): Transition plus smooth
+	// C'est pour ce genre de test que le nom charging_tp n'est pas
+	// du tout adapté, ici ce qu'on veut dire c'est : si l'action
+	// secondaire est en cours alors ralentir le temps
+	if(inputs.charging_tp == true)
+	{
+		data.time_factor = 0.2f;
+	}
+	else
+	{
+		data.time_factor = 1.f;
+	}
+	r32 world_delta_time = data.time_factor*inputs.delta_time;
+	
 	//teleportation
 	if(inputs.charging_tp == true)
 	{
-		data.player.tp_charge += inputs.delta_time * data.player.tp_charging_speed;
+		data.player.tp_charge += world_delta_time * data.player.tp_charging_speed;
 		if(data.player.tp_charge > data.player.tp_max_distance)
 			data.player.tp_charge = data.player.tp_max_distance;
 	}
@@ -47,7 +64,7 @@ void game_tick(GameData& data, Inputs& inputs)
 		inputs.direction1 * data.player.acceleration -
 		data.player.speed * friction;
 
-	data.player.speed += data.player.masse * acceleration * inputs.delta_time;
+	data.player.speed += data.player.masse * acceleration * world_delta_time;
 
 	r32 speed_norm = norm(data.player.speed);
 
@@ -55,7 +72,7 @@ void game_tick(GameData& data, Inputs& inputs)
 	if(speed_norm > data.player.max_speed)
 		data.player.speed *= data.player.max_speed / speed_norm;
   
-	data.player.pos += data.player.speed * inputs.delta_time;
+	data.player.pos += data.player.speed * world_delta_time;
 
 	//shooting
 	if(inputs.shooting)
@@ -73,8 +90,8 @@ void game_tick(GameData& data, Inputs& inputs)
 	{
 		if(data.projectiles[i].life_time > 0)
 		{
-			data.projectiles[i].pos += data.projectiles[i].direction * data.projectiles[i].speed * inputs.delta_time;
-			data.projectiles[i].life_time -= inputs.delta_time;
+			data.projectiles[i].pos += data.projectiles[i].direction * data.projectiles[i].speed * world_delta_time;
+			data.projectiles[i].life_time -= world_delta_time;
 		}
 		else
 		{

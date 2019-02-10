@@ -14,6 +14,7 @@ struct Inputs {
 	bool secondaire_start, secondaire_end;
     bool charging_tp;
     bool shooting;
+	
 	sf::Vector2i mouse_pos_tmp;
 	sf::Vector2u winsize_tmp;
 };
