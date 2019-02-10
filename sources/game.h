@@ -40,6 +40,7 @@ struct Entity {
     r32 max_speed;
     r32 acceleration;
     r32 masse;
+	r32 collision_radius;
     r32 life;
 
 	// TODO(Sam): Est ce que les ennemis doivent avoir ca ?
