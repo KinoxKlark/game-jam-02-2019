@@ -43,4 +43,7 @@ vector safe_normalise(vector vec)
 	return vec;
 }
 
+constexpr r32 PI = 3.1415926535;
+constexpr r32 PI2 = 2*PI;
+
 #endif

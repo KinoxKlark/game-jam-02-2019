@@ -2,6 +2,7 @@
 #include "intrinsic.h"
 
 #include <cmath>
+#include <cstdlib>
 #include <iostream>
 
 // TODO(Sam): Nettoyer ca !
@@ -13,13 +14,14 @@ void game_init(GameData& data)
 	player_weapon.cooldown = 0.2;
 	player_weapon.used = false;
 	player_weapon.waited_time = 0;
+	
 	// Player
 	data.player.to_destroy = false;
 	data.player.pos.x = 300;
 	data.player.pos.y = 200;
 	data.player.max_speed = 1000.f;
 	data.player.acceleration = 1000.f;
-	data.player.masse = 60.f;// 60kg
+	data.player.masse = 60.f; // 60kg
 	data.player.collision_radius = 45.f;
 	data.player.tp_charge = 0;
 	data.player.tp_charging_speed = 300;
@@ -41,6 +43,7 @@ void game_init(GameData& data)
 	data.projectiles = std::vector<Projectile>(500);
 	data.ennemies = std::vector<Entity>(500);
 
+#if 0	
 	for(size_t i(0); i < 3; i++)
 	{
 		Entity e;
@@ -57,6 +60,7 @@ void game_init(GameData& data)
 
 		data.ennemies.push_back(e);
 	}
+#endif	
 
 	// Debug
     data.debug_infos.frame_length_milliseconds = 0;
@@ -171,72 +175,90 @@ void game_tick(GameData& data, Inputs& inputs)
 	}
 
 	// Ennemis
+	while(data.ennemies.size() < 3)
 	{
-		for(auto& ennemi : data.ennemies)
+		r32 angle = (r32)(rand() % 360) / 360.f * PI2;
+		r32 distance = 1000.f;
+		
+	    Entity ennemi;
+		ennemi.pos.x = data.player.pos.x + distance * std::cos(angle);
+		ennemi.pos.y = data.player.pos.y + distance * std::sin(angle);
+		ennemi.max_speed = 500.f;
+		ennemi.acceleration = 100.f;
+		ennemi.masse = 60.f; // 60kg
+		ennemi.collision_radius = 45.f;
+		ennemi.life_max = 5;
+		ennemi.life = 5;
+
+		ennemi.to_destroy = false;
+
+		data.ennemies.push_back(ennemi);
+	}
+	for(auto& ennemi : data.ennemies)
+	{
+		// TODO(Sam): C'est bien le bon endroit pour faire ca ?
+		if(ennemi.life <= 0.f)
 		{
-			// TODO(Sam): C'est bien le bon endroit pour faire ca ?
-			if(ennemi.life <= 0.f)
-			{
-				ennemi.to_destroy = true;
-			}
-			else
-			{
-				vector direction = vector(data.player.pos - ennemi.pos);
+			ennemi.to_destroy = true;
+		}
+		else
+		{
+			vector direction = vector(data.player.pos - ennemi.pos);
 
-				//moving
-				vector acceleration =
-					direction * ennemi.acceleration -
-					ennemi.speed * friction;
+			//moving
+			vector acceleration =
+				direction * ennemi.acceleration -
+				ennemi.speed * friction;
 
-				ennemi.speed += ennemi.masse * acceleration * world_delta_time;
+			ennemi.speed += ennemi.masse * acceleration * world_delta_time;
 
-				r32 speed_norm = norm(ennemi.speed);
+			r32 speed_norm = norm(ennemi.speed);
 
-				//limits the speed
-				if(speed_norm > ennemi.max_speed)
-					ennemi.speed *= ennemi.max_speed / speed_norm;
+			//limits the speed
+			if(speed_norm > ennemi.max_speed)
+				ennemi.speed *= ennemi.max_speed / speed_norm;
 
 #if 0			// On met temporairement en pause les ennemis	
-				ennemi.pos += ennemi.speed * world_delta_time;
+			ennemi.pos += ennemi.speed * world_delta_time;
 #else
-				vector wanted_pos = ennemi.pos + ennemi.speed * world_delta_time;
+			vector wanted_pos = ennemi.pos + ennemi.speed * world_delta_time;
 
-				for(auto& entity: data.ennemies)
-				{
-					if(&entity == &ennemi) continue;
+			for(auto& entity: data.ennemies)
+			{
+				if(&entity == &ennemi) continue;
 					
-					vector wp_from_entity = wanted_pos - entity.pos;
-					r32 distance_final = norm(wp_from_entity);
+				vector wp_from_entity = wanted_pos - entity.pos;
+				r32 distance_final = norm(wp_from_entity);
 				
-					const r32 distance_between = entity.collision_radius + ennemi.collision_radius;
+				const r32 distance_between = entity.collision_radius + ennemi.collision_radius;
 
-					if(distance_final < distance_between)
-					{
-						vector push_direction = safe_normalise(wp_from_entity);
-						wanted_pos = entity.pos + push_direction*distance_between;
-					}
-				}
-				// TODO(Sam): Il faut merger les deux, les collisions devrait etre testee
-				// sur les entites et pas seulement les ennemis...
-				if(true)
+				if(distance_final < distance_between)
 				{
-					vector wp_from_entity = wanted_pos - data.player.pos;
-					r32 distance_final = norm(wp_from_entity);
-				
-					const r32 distance_between = data.player.collision_radius + ennemi.collision_radius;
-
-					if(distance_final < distance_between)
-					{
-						vector push_direction = safe_normalise(wp_from_entity);
-						wanted_pos = data.player.pos + push_direction*distance_between;
-					}
+					vector push_direction = safe_normalise(wp_from_entity);
+					wanted_pos = entity.pos + push_direction*distance_between;
 				}
+			}
+			// TODO(Sam): Il faut merger les deux, les collisions devrait etre testee
+			// sur les entites et pas seulement les ennemis...
+			if(true)
+			{
+				vector wp_from_entity = wanted_pos - data.player.pos;
+				r32 distance_final = norm(wp_from_entity);
+				
+				const r32 distance_between = data.player.collision_radius + ennemi.collision_radius;
+
+				if(distance_final < distance_between)
+				{
+					vector push_direction = safe_normalise(wp_from_entity);
+					wanted_pos = data.player.pos + push_direction*distance_between;
+				}
+			}
 			
-				ennemi.pos = wanted_pos;
+			ennemi.pos = wanted_pos;
 #endif	
-			}	
-		}
+		}	
 	}
+
 
 	// Projectiles
 	for(auto& projectile : data.projectiles)
