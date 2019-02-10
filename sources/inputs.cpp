@@ -10,6 +10,7 @@ Inputs get_inputs(sf::Window& window)
 	inputs.quit_game = false;
 	inputs.charging_tp = false;
 	inputs.shooting = false;
+	inputs.action3 = false;
 
 	while(window.pollEvent(event))
 	{
@@ -110,6 +111,8 @@ Inputs get_inputs(sf::Window& window)
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
 			inputs.shooting = true;
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+			inputs.action3 = true;
 
 	return inputs;
 }

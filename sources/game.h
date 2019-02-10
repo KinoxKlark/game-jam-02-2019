@@ -47,6 +47,12 @@ struct Entity {
 
 	bool to_destroy;
 
+    bool is_rolling;
+    r32 rolling_duration;
+    r32 time_spent_rolling;
+    r32 rolling_speed;
+
+
     r32 max_speed;
     r32 acceleration;
     r32 masse;

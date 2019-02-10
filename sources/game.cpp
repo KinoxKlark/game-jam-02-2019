@@ -32,6 +32,11 @@ void game_init(GameData& data)
 	data.player.asset_type = AssetType::PLAYER;
 	data.player.life_max = 20;
 	data.player.life = 20;
+
+    data.player.is_rolling = false;
+    data.player.rolling_duration = 0.5;
+    data.player.time_spent_rolling = 0.f;
+	data.player.rolling_speed = 1200.f;
 	
 	data.camera.pos.x = data.player.pos.x;
 	data.camera.pos.y = data.player.pos.y;
@@ -94,49 +99,67 @@ void game_tick(GameData& data, Inputs& inputs)
 	}
 	else if(data.player.tp_charge)
 	{
-		// std::cout << "tp_charge" << data.player.tp_charge << std::endl;
-		// std::cout << "x" << inputs.direction1.x << std::endl;
-		// std::cout << "y" << inputs.direction1.y << std::endl;
 		data.player.pos += data.player.tp_charge * inputs.direction1;
 		data.player.tp_charge = 0;
 	}
 	
 	//moving
 	{
-		vector acceleration =
-			inputs.direction1 * data.player.acceleration -
-			data.player.speed * friction;
+		if(inputs.action3)
+			data.player.is_rolling = true;
 
-		data.player.speed += data.player.masse * acceleration * world_delta_time;
+		if(data.player.time_spent_rolling > data.player.rolling_duration)
+		{
+			data.player.time_spent_rolling = 0;
+			data.player.is_rolling = false;
+		}
 
-		r32 speed_norm = norm(data.player.speed);
+		if(data.player.is_rolling)
+		{
+			data.player.time_spent_rolling += world_delta_time;
+			vector deviation = inputs.direction1 * data.player.rolling_speed * 0.1f;
+			vector rolling_speed = data.player.rolling_speed * data.player.orientation;
+			data.player.pos += ( rolling_speed + deviation ) * world_delta_time;
+		}
+		else
+		{
+		
+			vector acceleration =
+				inputs.direction1 * data.player.acceleration -
+				data.player.speed * friction;
 
-		//limits the speed
-		if(speed_norm > data.player.max_speed)
-			data.player.speed *= data.player.max_speed / speed_norm;
-  
-		vector wanted_pos = data.player.pos + data.player.speed * world_delta_time;
+			data.player.speed += data.player.masse * acceleration * world_delta_time;
+
+			r32 speed_norm = norm(data.player.speed);
+
+			//limits the speed
+			if(speed_norm > data.player.max_speed)
+				data.player.speed *= data.player.max_speed / speed_norm;
+	
+			vector wanted_pos = data.player.pos + data.player.speed * world_delta_time;
 
 #if 0		
-		for(auto& entity: data.ennemies)
-		{
-			vector wp_from_entity = wanted_pos - entity.pos;
-			r32 distance_final = norm(wp_from_entity);
-			
-			const r32 distance_between = entity.collision_radius + data.player.collision_radius;
-
-			if(distance_final < distance_between)
+			for(auto& entity: data.ennemies)
 			{
-				// TODO(Sam): Que se passe-t-il lors de la collision ?
-				// Touche par un ennemi ...
+				vector wp_from_entity = wanted_pos - entity.pos;
+				r32 distance_final = norm(wp_from_entity);
+				
+				const r32 distance_between = entity.collision_radius + data.player.collision_radius;
 
-				//vector push_direction = safe_normalise(wp_from_entity);
-				//wanted_pos = entity.pos + push_direction*distance_between;
+				if(distance_final < distance_between)
+				{
+					// TODO(Sam): Que se passe-t-il lors de la collision ?
+					// Touche par un ennemi ...
+
+					//vector push_direction = safe_normalise(wp_from_entity);
+					//wanted_pos = entity.pos + push_direction*distance_between;
+				}
 			}
-		}
 #endif		
     	
-		data.player.pos = wanted_pos;
+			data.player.pos = wanted_pos;			
+		}
+
 	}
 	
 	//shooting
@@ -153,7 +176,7 @@ void game_tick(GameData& data, Inputs& inputs)
 		data.player.weapon.used = false;
 	}
 
-	if(inputs.shooting and !data.player.weapon.used)
+	if(inputs.shooting and !data.player.weapon.used and !data.player.is_rolling)
 	{
 			data.player.weapon.used = true;
 			// TODO(Sam): Est ce qu'on fera pas une fonction pour cr�er ces entit�s ?
