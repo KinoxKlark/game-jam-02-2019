@@ -29,6 +29,8 @@ Inputs get_inputs(sf::Window& window)
 	{
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
 			inputs.shooting = true;
+		if (sf::Joystick::isConnected(0) and sf::Joystick::isButtonPressed(0, 5))
+			inputs.shooting = true;
 	}
 
 	// Action Secondaire
@@ -36,6 +38,8 @@ Inputs get_inputs(sf::Window& window)
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::C))
 			inputs.charging_tp = true;
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
+			inputs.charging_tp = true;
+		if (sf::Joystick::isConnected(0) and sf::Joystick::isButtonPressed(0, 6))
 			inputs.charging_tp = true;
     }
 	

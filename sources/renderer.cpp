@@ -15,7 +15,7 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 {
 	//Center the view on the player
 	sf::View view(sf::FloatRect(0,0, window.getSize().x, window.getSize().y));
-	view.setCenter(data.player.pos.x,data.player.pos.y);
+	view.setCenter(data.camera.pos.x, data.camera.pos.y);
 	window.setView(view);
 
 	// TODO(Sam): Fair un vrai syst�me d'asset
