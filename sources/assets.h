@@ -2,7 +2,7 @@
 #define ASSETS_H
 
 #include "intrinsic.h"
-#include <SFML\Graphics.hpp>
+#include <SFML/Graphics.hpp>
 
 enum AssetType {
 	NONE,

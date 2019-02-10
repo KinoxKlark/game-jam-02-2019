@@ -3,7 +3,7 @@
 
 #include <cstdio>
 
-// TODO(Sam): Est ce qu'on met ça dans un assets.cpp ?
+// TODO(Sam): Est ce qu'on met ï¿½a dans un assets.cpp ?
 bool load_assets(Assets& assets)
 {
     if (!assets.font.loadFromFile("assets/fonts/ConnectionII.otf"))
@@ -54,6 +54,16 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 	{
 		projectile.setPosition(p.pos.x,p.pos.y);
 		window.draw(projectile);
+	}
+	
+	if(data.player.tp_charge > 0)
+	{
+		sf::CircleShape tp_target(20);
+		tp_target.setOrigin(20,20);
+		tp_target.setFillColor(sf::Color::Green);
+		tp_target.setPosition(data.player.pos.x + (data.player.tp_charge * inputs.direction1.x),
+		data.player.pos.y + data.player.tp_charge * inputs.direction1.y);
+		window.draw(tp_target);
 	}
 
 	window.draw(text);
