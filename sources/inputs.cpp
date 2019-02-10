@@ -18,10 +18,26 @@ Inputs get_inputs(sf::Window& window)
 		   (event.type == sf::Event::KeyPressed and
 			event.key.code == sf::Keyboard::Escape))
 			inputs.quit_game = true;
+
+		// TODO(Sam): On ne devrait surtout pas utiliesr de Event::KeyPressed pour
+		// le gameplay je laisse en attendant d'avoir changé
 		if(event.type == sf::Event::KeyPressed and event.key.code == sf::Keyboard::Space)
 			inputs.shooting = true;
 	}
 
+	// Action Primaire
+	{
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+			inputs.shooting = true;
+	}
+
+	// Action Secondaire
+	{
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::C))
+			inputs.charging_tp = true;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
+			inputs.charging_tp = true;
+    }
 	
 	// Recuperation de la direction1
 	vector direction1(0,0);
@@ -34,9 +50,6 @@ Inputs get_inputs(sf::Window& window)
 			direction1.x -= 1;
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 			direction1.x += 1;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::C))
-			inputs.charging_tp = true;
-		
 	}
 	if (sf::Joystick::isConnected(0) and
 		sf::Joystick::hasAxis(0, sf::Joystick::X) and
