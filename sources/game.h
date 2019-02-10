@@ -7,21 +7,18 @@
 
 #include <vector>
 
-
+// TODO(Sam): On devrait pas merge avec le concepte d'entity ?
 struct Projectile {
     r32 life_time;
     r32 speed;
     vector pos;
     vector direction;
 
-	AssetType asset_type;
+    AssetType asset_type;
 };
 
 struct Entity {
-	
-	// Todo(Sam): C'est des pixels par secondes, et des
-	// pixels par secondes par secondes, a voir pour
-	// uniformiser en game unit ou autre
+	// C'est des game_unit par sec etc...
     vector pos;
     vector speed;
     r32 max_speed;
@@ -32,7 +29,13 @@ struct Entity {
     r32 tp_charging_speed;
     r32 tp_max_distance;
 
-AssetType asset_type;
+    AssetType asset_type;
+};
+
+// TODO(Sam): On devrait pas merge avec le concepte d'entity ?
+struct Camera {
+    vector pos;
+	vector speed;
 };
 
 
@@ -43,10 +46,11 @@ struct DebugInfos {
 
 struct GameData {
     Entity player;
+	Camera camera;
     std::vector<Projectile> projectiles;
 	r32 time_factor;
 
-Assets assets;
+    Assets assets;
 
 	DebugInfos debug_infos;
 };

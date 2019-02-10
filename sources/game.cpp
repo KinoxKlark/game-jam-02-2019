@@ -18,6 +18,11 @@ void game_init(GameData& data)
 	data.player.tp_max_distance = 500;
 	data.player.asset_type = AssetType::PLAYER;
 
+	data.camera.pos.x = 0;
+	data.camera.pos.y = 0;
+	data.camera.speed.x = 0;
+	data.camera.speed.y = 0;
+	
 	data.time_factor = 1.f;
 
 	// data.projectiles = std::vector<Projectile>();
@@ -93,7 +98,8 @@ void game_tick(GameData& data, Inputs& inputs)
 	{
 		if(data.projectiles[i].life_time > 0)
 		{
-			data.projectiles[i].pos += data.projectiles[i].direction * data.projectiles[i].speed * world_delta_time;
+			data.projectiles[i].pos += data.projectiles[i].direction *
+				data.projectiles[i].speed * world_delta_time;
 			data.projectiles[i].life_time -= world_delta_time;
 		}
 		else
@@ -106,6 +112,22 @@ void game_tick(GameData& data, Inputs& inputs)
 
 	}
 
+	// Camera
+	{
+		vector direction_player = data.player.pos - data.camera.pos;
+		r32 distance_player = norm(direction_player);
+		distance_player = distance_player < 0.01 ? 1.f : distance_player;
+		const r32 camera_masse(20.f); // kg
+		const r32 attraction_factor(.1f);
+		const r32 camera_friction(0.5f);
+
+		vector acceleration = camera_masse*(attraction_factor*direction_player*distance_player
+			- camera_friction*data.camera.speed);
+
+		// TOOD(Sam): Est ce qu'on utilise la vitesse du jeu ou du monde?
+		data.camera.speed += acceleration * world_delta_time;
+		data.camera.pos += data.camera.speed * world_delta_time;
+	}
 
 	return;
 }
