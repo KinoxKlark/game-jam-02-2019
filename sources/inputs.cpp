@@ -35,7 +35,7 @@ Inputs get_inputs(sf::Window& window)
 	{
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::C))
 			inputs.charging_tp = true;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
 			inputs.charging_tp = true;
     }
 	
