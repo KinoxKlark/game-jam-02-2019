@@ -11,6 +11,7 @@ void game_init(GameData& data)
 	player_gun.type = GT_pistol;
 	player_gun.projectile_type = PT_pistol_bullet;
 	// Player
+	data.player.to_destroy = false;
 	data.player.pos.x = 300;
 	data.player.pos.y = 200;
 	data.player.max_speed = 1000.f;
@@ -45,6 +46,8 @@ void game_init(GameData& data)
 		e.masse = 60.f;// 60kg
 		e.collision_radius = 45.f;
 		e.life = 1;
+
+		e.to_destroy = false;
 
 		data.ennemies.push_back(e);
 	}
@@ -144,28 +147,11 @@ void game_tick(GameData& data, Inputs& inputs)
 				p.pos = data.player.pos;
 				p.direction = data.player.orientation;
 				p.asset_type = AssetType::PROJECTILE;
-			
+				p.to_destroy = false;
+
+				
 				data.projectiles.push_back(p);
 			}
-	}
-
-	// Projectiles
-	for(size_t i(0); i < data.projectiles.size() ; i++)
-	{
-		if(data.projectiles[i].life_time > 0)
-		{
-			data.projectiles[i].pos += data.projectiles[i].direction *
-				data.projectiles[i].speed * world_delta_time;
-			data.projectiles[i].life_time -= world_delta_time;
-		}
-		else
-		{
-			data.projectiles[i] = data.projectiles[data.projectiles.size()-1];
-			data.projectiles.pop_back();
-			i--;
-		}
-		
-
 	}
 
 	// Ennemis
@@ -228,16 +214,40 @@ void game_tick(GameData& data, Inputs& inputs)
 		}
 	}
 
-	// TODO(Sam): On gere ca ici ?
-	for(size_t i(0); i < data.ennemies.size() ; i++)
+	// Projectiles
+	for(auto& projectile : data.projectiles)
+	for(size_t i(0); i < data.projectiles.size() ; i++)
 	{
-		if(data.ennemies[i].life <= 0)
+		if(projectile.life_time > 0)
 		{
-			data.ennemies[i] = data.ennemies[data.ennemies.size()-1];
-			data.ennemies.pop_back();
-			i--;
+			projectile.pos += projectile.direction *
+				projectile.speed * world_delta_time;
+			projectile.life_time -= world_delta_time;
+
+			for(auto& entity: data.ennemies)
+			{
+				vector from_entity = projectile.pos - entity.pos;
+				r32 distance = norm(from_entity);
+		    
+				if(distance < entity.collision_radius)
+				{
+					entity.life -= projectile.dommage;
+					projectile.to_destroy = true;
+
+					// TODO(Sam): C'est bien le bon endroit pour faire ca ?
+					if(entity.life <= 0.f)
+					{
+						entity.to_destroy = true;
+					}
+				}
+			}
+		}
+		else
+		{
+			projectile.to_destroy = true;
 		}
 	}
+
 
 	// Camera
 	{
@@ -251,15 +261,14 @@ void game_tick(GameData& data, Inputs& inputs)
 		vector marker_2(marker_1);
 		if(data.player.tp_charge > 0)
 		{
-			// TODO(Sam): On a ce code aussi dans render, peut �tre on veut garder
-			// la position du tp dans les data pour ne pas se r�peter ?
+			// TODO(Sam): On a ce code aussi dans render, peut etre on veut garder
+			// la position du tp dans les data pour ne pas se repeter ?
 			marker_2 = data.player.pos + (data.player.tp_charge * inputs.direction1);
 		}
 
 		r32 k(0.75);
 		data.camera.focus_pos = (1.f-k)*marker_1+k*marker_2;
 
-		
 		// Camera mouvement
 		vector direction_focus = data.camera.focus_pos - data.camera.pos;
 		r32 distance_focus = norm(direction_focus);
@@ -274,6 +283,27 @@ void game_tick(GameData& data, Inputs& inputs)
 		// TOOD(Sam): Est ce qu'on utilise la vitesse du jeu ou du monde?
 		data.camera.speed += acceleration * world_delta_time;
 		data.camera.pos += data.camera.speed * world_delta_time;
+	}
+
+
+	// Destruction des divers entites et projectiles
+    for(size_t i(0); i < data.ennemies.size() ; i++)
+	{
+		if(data.ennemies[i].to_destroy)
+		{
+			data.ennemies[i] = data.ennemies[data.ennemies.size()-1];
+			data.ennemies.pop_back();
+			i--;
+		}
+	}
+	for(size_t i(0); i < data.projectiles.size() ; i++)
+	{
+		if(data.projectiles[i].to_destroy)
+		{
+			data.projectiles[i] = data.projectiles[data.projectiles.size()-1];
+			data.projectiles.pop_back();
+			i--;
+		}
 	}
 
 	return;

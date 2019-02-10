@@ -23,6 +23,9 @@ struct Projectile {
     vector pos;
     vector direction;
     r32 dommage;
+
+	bool to_destroy;
+	
     AssetType asset_type;
 };
 
@@ -36,6 +39,8 @@ struct Entity {
     vector pos;
     vector speed;
 	vector orientation;
+
+	bool to_destroy;
 
     r32 max_speed;
     r32 acceleration;
