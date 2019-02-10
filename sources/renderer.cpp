@@ -27,8 +27,8 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 	player_direction.setFillColor(sf::Color::Red);
 	player.setPosition(data.player.pos.x,data.player.pos.y);
 	player_direction.setPosition(
-		data.player.pos.x + data.player.direction_shoot.x*50,
-		data.player.pos.y + data.player.direction_shoot.y*50);
+		data.player.pos.x + data.player.orientation.x*50,
+		data.player.pos.y + data.player.orientation.y*50);
 
 	sf::CircleShape camera_focus(5);
 	camera_focus.setOrigin(5,5);

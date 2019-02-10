@@ -16,8 +16,8 @@ void game_init(GameData& data)
 	data.player.tp_charge = 0;
 	data.player.tp_charging_speed = 300;
 	data.player.tp_max_distance = 500;
-	data.player.direction_shoot.x = 0;
-	data.player.direction_shoot.y = 1;
+	data.player.orientation.x = 0;
+	data.player.orientation.y = 1;
 	data.player.asset_type = AssetType::PLAYER;
 	
 	data.camera.pos.x = data.player.pos.x;
@@ -120,8 +120,8 @@ void game_tick(GameData& data, Inputs& inputs)
 
 	//shooting
 	r32 direction2_length(norm(inputs.direction2));
-	if(direction2_length > 0.1) // TODO(Sam): Quelle sensibilité ?
-		data.player.direction_shoot = inputs.direction2 / direction2_length;
+	if(direction2_length > 0.1) // TODO(Sam): Quelle sensibilitï¿½ ?
+		data.player.orientation = inputs.direction2 / direction2_length;
 	if(inputs.shooting)
 	{
 		// TODO(Sam): Est ce qu'on fera pas une fonction pour crï¿½er ces entitï¿½s ?
@@ -129,7 +129,7 @@ void game_tick(GameData& data, Inputs& inputs)
 		p.life_time = 4;
 		p.speed = 200;
 		p.pos = data.player.pos;
-		p.direction = data.player.direction_shoot;
+		p.direction = data.player.orientation;
 		p.asset_type = AssetType::PROJECTILE;
 		
 		data.projectiles.push_back(p);
@@ -153,20 +153,30 @@ void game_tick(GameData& data, Inputs& inputs)
 
 	}
 
+	for(size_t i(0); i < data.ennemies.size() ; i++)
+	{
+		if(data.ennemies[i].life <= 0)
+		{
+			data.ennemies[i] = data.ennemies[data.ennemies.size()-1];
+			data.ennemies.pop_back();
+			i--;
+		}
+	}
+
 	// Camera
 	{
 		// Camera focus
 	    r32 direction2_length(norm(inputs.direction2));
 		r32 speed_factor(.1f);
 		vector marker_1(
-			data.player.pos+data.player.direction_shoot*100.f*direction2_length
+			data.player.pos+data.player.orientation*100.f*direction2_length
 			+ data.player.speed*speed_factor);
 
 		vector marker_2(marker_1);
 		if(data.player.tp_charge > 0)
 		{
-			// TODO(Sam): On a ce code aussi dans render, peut être on veut garder
-			// la position du tp dans les data pour ne pas se répeter ?
+			// TODO(Sam): On a ce code aussi dans render, peut ï¿½tre on veut garder
+			// la position du tp dans les data pour ne pas se rï¿½peter ?
 			marker_2 = data.player.pos + (data.player.tp_charge * inputs.direction1);
 		}
 

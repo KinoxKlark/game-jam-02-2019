@@ -21,11 +21,13 @@ struct Entity {
 	// C'est des game_unit par sec etc...
     vector pos;
     vector speed;
+	vector orientation;
+    
     r32 max_speed;
     r32 acceleration;
     r32 masse;
+    r32 life;
 
-	vector direction_shoot;
 
     r32 tp_charge;
     r32 tp_charging_speed;
