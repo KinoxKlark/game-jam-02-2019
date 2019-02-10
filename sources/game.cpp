@@ -84,7 +84,7 @@ void game_tick(GameData& data, Inputs& inputs)
 	//teleportation
 	if(inputs.charging_tp == true)
 	{
-		data.player.tp_charge += world_delta_time * data.player.tp_charging_speed;
+		data.player.tp_charge += inputs.delta_time * data.player.tp_charging_speed;
 		if(data.player.tp_charge > data.player.tp_max_distance)
 			data.player.tp_charge = data.player.tp_max_distance;
 	}
