@@ -16,6 +16,7 @@ void game_init(GameData& data)
 	data.player.tp_charge = 0;
 	data.player.tp_charging_speed = 300;
 	data.player.tp_max_distance = 500;
+	data.player.asset_type = AssetType::PLAYER;
 
 	data.time_factor = 1.f;
 
@@ -77,12 +78,14 @@ void game_tick(GameData& data, Inputs& inputs)
 	//shooting
 	if(inputs.shooting)
 	{
+		// TODO(Sam): Est ce qu'on fera pas une fonction pour créer ces entités ?
 		Projectile p;
 		p.life_time = 4;
 		p.speed = 200;
 		p.pos = data.player.pos;
 		p.direction = inputs.direction2;
-
+		p.asset_type = AssetType::PROJECTILE;
+		
 		data.projectiles.push_back(p);
 	}
 

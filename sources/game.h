@@ -1,14 +1,20 @@
 #ifndef GAME_H
 #define GAME_H
+
 #include "intrinsic.h"
 #include "inputs.h"
+#include "assets.h"
+
 #include <vector>
+
 
 struct Projectile {
     r32 life_time;
     r32 speed;
     vector pos;
     vector direction;
+
+	AssetType asset_type;
 };
 
 struct Entity {
@@ -25,6 +31,8 @@ struct Entity {
     r32 tp_charge;
     r32 tp_charging_speed;
     r32 tp_max_distance;
+
+AssetType asset_type;
 };
 
 
@@ -37,7 +45,9 @@ struct GameData {
     Entity player;
     std::vector<Projectile> projectiles;
 	r32 time_factor;
-	
+
+Assets assets;
+
 	DebugInfos debug_infos;
 };
 

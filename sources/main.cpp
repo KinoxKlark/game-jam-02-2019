@@ -1,10 +1,10 @@
 #include <SFML/Graphics.hpp>
 
-
 #include "intrinsic.h"
 #include "inputs.h"
 #include "game.h"
 #include "renderer.h"
+#include "assets.h"
 
 int main()
 {
@@ -14,6 +14,11 @@ int main()
 
 	GameData data;
 	game_init(data);
+	if(!load_assets(data.assets))
+	{
+		// TODO(Sam): Gestion des erreur de chargement d'assets...
+		return 1;
+	}
 	
 	sf::RenderWindow window(sf::VideoMode(GAME_WIDTH, GAME_HEIGHT), "Game");
 	window.setMouseCursorGrabbed(true);

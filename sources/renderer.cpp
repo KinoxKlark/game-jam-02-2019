@@ -1,6 +1,15 @@
 #include "renderer.h"
+#include "assets.h"
 
 #include <cstdio>
+
+// TODO(Sam): Est ce qu'on met ça dans un assets.cpp ?
+bool load_assets(Assets& assets)
+{
+    if (!assets.font.loadFromFile("assets/fonts/ConnectionII.otf"))
+		return false;
+	return true;
+}
 
 void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs)
 {
@@ -19,13 +28,7 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 	projectile.setOrigin(10,10);
 	projectile.setFillColor(sf::Color::Blue);
 
-	// TODO(Sam): Mettre ï¿½a au bon endroit
-    sf::Font font;
-    if (!font.loadFromFile("assets/fonts/ConnectionII.otf"))
-	{
-		return;
-	}
-
+	// TODO(Sam): Une GUI qui tient la route...
 	char debug_string[1024];
 	std::sprintf(debug_string, "FPS: %f \nDirection1.x = %f \nDirection1.y = %f \nDirection2.x = %f \nDirection2.y = %f \nMouse.x = %d \nMouse.y = %d \nWidth = %d \nHeight = %d",
 				 1000.f/data.debug_infos.frame_length_milliseconds,
@@ -37,11 +40,10 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 				 inputs.mouse_pos_tmp.y,
 				 inputs.winsize_tmp.x,
 				 inputs.winsize_tmp.y);
-    sf::Text text(debug_string, font, 18);
+    sf::Text text(debug_string, data.assets.font, 18);
 	text.setFillColor(sf::Color::Black);
 
 	// end tmp
-
 
 	window.clear(sf::Color::White);
 	
