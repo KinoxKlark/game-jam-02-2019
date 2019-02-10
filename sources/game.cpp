@@ -7,6 +7,9 @@
 // TODO(Sam): Nettoyer ca !
 void game_init(GameData& data)
 {
+	Gun player_gun;
+	player_gun.type = GT_pistol;
+	player_gun.projectile_type = PT_pistol_bullet;
 	// Player
 	data.player.pos.x = 300;
 	data.player.pos.y = 200;
@@ -18,6 +21,7 @@ void game_init(GameData& data)
 	data.player.tp_max_distance = 500;
 	data.player.orientation.x = 0;
 	data.player.orientation.y = 1;
+	data.player.gun = player_gun;
 	data.player.asset_type = AssetType::PLAYER;
 	
 	data.camera.pos.x = data.player.pos.x;
@@ -38,6 +42,7 @@ void game_init(GameData& data)
 		e.max_speed = 500.f;
 		e.acceleration = 100.f * i;
 		e.masse = 60.f;// 60kg
+		e.life = 1;
 
 		data.ennemies.push_back(e);
 	}
@@ -124,15 +129,20 @@ void game_tick(GameData& data, Inputs& inputs)
 		data.player.orientation = inputs.direction2 / direction2_length;
 	if(inputs.shooting)
 	{
-		// TODO(Sam): Est ce qu'on fera pas une fonction pour cr�er ces entit�s ?
-		Projectile p;
-		p.life_time = 4;
-		p.speed = 200;
-		p.pos = data.player.pos;
-		p.direction = data.player.orientation;
-		p.asset_type = AssetType::PROJECTILE;
-		
-		data.projectiles.push_back(p);
+
+			// TODO(Sam): Est ce qu'on fera pas une fonction pour cr�er ces entit�s ?
+			Projectile p;
+			if(data.player.gun.type == GT_pistol)
+			{
+				p.type = PT_pistol_bullet;
+				p.life_time = 4;
+				p.speed = 200;
+				p.pos = data.player.pos;
+				p.direction = data.player.orientation;
+				p.asset_type = AssetType::PROJECTILE;
+			
+				data.projectiles.push_back(p);
+			}
 	}
 
 	for(size_t i(0); i < data.projectiles.size() ; i++)
