@@ -50,29 +50,7 @@ void game_tick(GameData& data, Inputs& inputs)
 {
 	r32 friction(0.5f);//Can depend on the floor
 	r32 world_delta_time = data.time_factor*inputs.delta_time;
-	//Ennemies
-	{
-		for(auto& e: data.ennemies)
-		{
-			//Direction: Choose where they go -> AI?
-			vector direction = vector(data.player.pos - e.pos);
-
-			//moving
-			vector acceleration =
-				direction * e.acceleration -
-				e.speed * friction;
-
-			e.speed += e.masse * acceleration * world_delta_time;
-
-			r32 speed_norm = norm(e.speed);
-
-			//limits the speed
-			if(speed_norm > e.max_speed)
-				e.speed *= e.max_speed / speed_norm;
-		
-			e.pos += e.speed * world_delta_time;
-		}
-	}
+	
 	// Slow motion
 	// TODO(Sam): Transition plus smooth
 	// C'est pour ce genre de test que le nom charging_tp n'est pas
@@ -135,6 +113,7 @@ void game_tick(GameData& data, Inputs& inputs)
 		data.projectiles.push_back(p);
 	}
 
+	// Projectiles
 	for(size_t i(0); i < data.projectiles.size() ; i++)
 	{
 		if(data.projectiles[i].life_time > 0)
@@ -153,6 +132,30 @@ void game_tick(GameData& data, Inputs& inputs)
 
 	}
 
+	// Ennemis
+	{
+		for(auto& ennemi : data.ennemies)
+		{
+			vector direction = vector(data.player.pos - ennemi.pos);
+
+			//moving
+			vector acceleration =
+				direction * ennemi.acceleration -
+				ennemi.speed * friction;
+
+			ennemi.speed += ennemi.masse * acceleration * world_delta_time;
+
+			r32 speed_norm = norm(ennemi.speed);
+
+			//limits the speed
+			if(speed_norm > ennemi.max_speed)
+				ennemi.speed *= ennemi.max_speed / speed_norm;
+		
+			ennemi.pos += ennemi.speed * world_delta_time;
+		}
+	}
+
+	// TODO(Sam): On gere ca ici ?
 	for(size_t i(0); i < data.ennemies.size() ; i++)
 	{
 		if(data.ennemies[i].life <= 0)
