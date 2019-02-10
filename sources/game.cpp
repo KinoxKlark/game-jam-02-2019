@@ -159,7 +159,7 @@ void game_tick(GameData& data, Inputs& inputs)
 				Projectile p;
 				p.type = PT_pistol_bullet;
 				p.life_time = 4;
-				p.speed = 2;
+				p.speed = 10;
 				p.dommage = 1;
 				p.pos = data.player.pos;
 				p.direction = data.player.orientation;
@@ -309,7 +309,7 @@ void game_tick(GameData& data, Inputs& inputs)
 		r32 distance_focus = norm(direction_focus);
 		distance_focus = distance_focus < 0.01 ? 1.f : distance_focus;
 		const r32 camera_masse(20.f); // kg
-		const r32 attraction_factor(.1f);
+		const r32 attraction_factor(5.f);
 		const r32 camera_friction(0.9f);
 
 		vector acceleration = camera_masse*(attraction_factor*direction_focus*distance_focus
