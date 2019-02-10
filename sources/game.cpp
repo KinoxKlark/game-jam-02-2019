@@ -174,59 +174,67 @@ void game_tick(GameData& data, Inputs& inputs)
 	{
 		for(auto& ennemi : data.ennemies)
 		{
-			vector direction = vector(data.player.pos - ennemi.pos);
+			// TODO(Sam): C'est bien le bon endroit pour faire ca ?
+			if(ennemi.life <= 0.f)
+			{
+				ennemi.to_destroy = true;
+			}
+			else
+			{
+				vector direction = vector(data.player.pos - ennemi.pos);
 
-			//moving
-			vector acceleration =
-				direction * ennemi.acceleration -
-				ennemi.speed * friction;
+				//moving
+				vector acceleration =
+					direction * ennemi.acceleration -
+					ennemi.speed * friction;
 
-			ennemi.speed += ennemi.masse * acceleration * world_delta_time;
+				ennemi.speed += ennemi.masse * acceleration * world_delta_time;
 
-			r32 speed_norm = norm(ennemi.speed);
+				r32 speed_norm = norm(ennemi.speed);
 
-			//limits the speed
-			if(speed_norm > ennemi.max_speed)
-				ennemi.speed *= ennemi.max_speed / speed_norm;
+				//limits the speed
+				if(speed_norm > ennemi.max_speed)
+					ennemi.speed *= ennemi.max_speed / speed_norm;
 
-#if 0		// On met temporairement en pause les ennemis	
-			ennemi.pos += ennemi.speed * world_delta_time;
+#if 0			// On met temporairement en pause les ennemis	
+				ennemi.pos += ennemi.speed * world_delta_time;
 #else
-			vector wanted_pos = ennemi.pos + ennemi.speed * world_delta_time;
+				vector wanted_pos = ennemi.pos + ennemi.speed * world_delta_time;
 
-			for(auto& entity: data.ennemies)
-			{
-				if(&entity == &ennemi) continue;
+				for(auto& entity: data.ennemies)
+				{
+					if(&entity == &ennemi) continue;
+					
+					vector wp_from_entity = wanted_pos - entity.pos;
+					r32 distance_final = norm(wp_from_entity);
 				
-				vector wp_from_entity = wanted_pos - entity.pos;
-				r32 distance_final = norm(wp_from_entity);
-			
-				const r32 distance_between = entity.collision_radius + ennemi.collision_radius;
+					const r32 distance_between = entity.collision_radius + ennemi.collision_radius;
 
-				if(distance_final < distance_between)
-				{
-					vector push_direction = safe_normalise(wp_from_entity);
-					wanted_pos = entity.pos + push_direction*distance_between;
+					if(distance_final < distance_between)
+					{
+						vector push_direction = safe_normalise(wp_from_entity);
+						wanted_pos = entity.pos + push_direction*distance_between;
+					}
 				}
-			}
-			// TODO(Sam): Il faut merger les deux, les collisions devrait etre testee
-			// sur les entites et pas seulement les ennemis...
-			if(true)
-			{
-				vector wp_from_entity = wanted_pos - data.player.pos;
-				r32 distance_final = norm(wp_from_entity);
-			
-				const r32 distance_between = data.player.collision_radius + ennemi.collision_radius;
+				// TODO(Sam): Il faut merger les deux, les collisions devrait etre testee
+				// sur les entites et pas seulement les ennemis...
+				if(true)
+				{
+					vector wp_from_entity = wanted_pos - data.player.pos;
+					r32 distance_final = norm(wp_from_entity);
+				
+					const r32 distance_between = data.player.collision_radius + ennemi.collision_radius;
 
-				if(distance_final < distance_between)
-				{
-					vector push_direction = safe_normalise(wp_from_entity);
-					wanted_pos = data.player.pos + push_direction*distance_between;
+					if(distance_final < distance_between)
+					{
+						vector push_direction = safe_normalise(wp_from_entity);
+						wanted_pos = data.player.pos + push_direction*distance_between;
+					}
 				}
-			}
-    	
-			ennemi.pos = wanted_pos;
-#endif			
+			
+				ennemi.pos = wanted_pos;
+#endif	
+			}	
 		}
 	}
 
@@ -249,12 +257,6 @@ void game_tick(GameData& data, Inputs& inputs)
 				{
 					entity.life -= projectile.dommage;
 					projectile.to_destroy = true;
-
-					// TODO(Sam): C'est bien le bon endroit pour faire ca ?
-					if(entity.life <= 0.f)
-					{
-						entity.to_destroy = true;
-					}
 				}
 			}
 		}
