@@ -140,6 +140,7 @@ void game_tick(GameData& data, Inputs& inputs)
 				p.type = PT_pistol_bullet;
 				p.life_time = 4;
 				p.speed = 200;
+				p.dommage = 1;
 				p.pos = data.player.pos;
 				p.direction = data.player.orientation;
 				p.asset_type = AssetType::PROJECTILE;
