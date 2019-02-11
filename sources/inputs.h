@@ -20,6 +20,6 @@ struct Inputs {
 	sf::Vector2u winsize_tmp;
 };
 
-Inputs get_inputs(sf::Window& window);
+Inputs get_inputs(sf::Window& window, i32 delta_time_ms);
 
 #endif

@@ -38,8 +38,7 @@ int main()
 			last_timestamp = current_timestamp;
 
             // Recuperation des inputs
-		    Inputs inputs = get_inputs(window);
-			inputs.delta_time = FRAME_LENGTH_MILLISECONDS / 1000.f;
+		    Inputs inputs = get_inputs(window, FRAME_LENGTH_MILLISECONDS);
 			
 			// Game Logique
 			game_tick(data, inputs);

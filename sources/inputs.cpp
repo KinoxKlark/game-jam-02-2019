@@ -1,8 +1,68 @@
 #include "inputs.h"
 #include "intrinsic.h"
 
-Inputs get_inputs(sf::Window& window)
+#include <iostream>
+
+struct InputsHelper {
+	struct Keyboard {
+		struct Key {
+			sf::Keyboard::Key sfml_key;
+			r32 strength;
+		};
+
+		// TODO(Sam): Est ce qu'on veut gerer ca avec
+		// une map a terme ?
+		Key W, A, S, D;
+	};
+
+	Keyboard keyboard;
+};
+
+inline
+void updateHelperKeys(InputsHelper::Keyboard::Key& key, i32 dt_ms)
 {
+	constexpr r32 KEY_ATTACK_SPEED = 1.f / 200.f;
+	constexpr r32 KEY_RELEASE_SPEED = KEY_ATTACK_SPEED;
+	if(sf::Keyboard::isKeyPressed(key.sfml_key))
+	{
+		key.strength += KEY_ATTACK_SPEED*dt_ms;
+	}
+	else
+	{
+		key.strength -= KEY_RELEASE_SPEED*dt_ms;
+	}
+
+	if(key.strength < 0.f) key.strength = 0.f;
+	if(key.strength > 1.f) key.strength = 1.f;
+
+}
+
+inline
+void updateHelper(InputsHelper& helper, i32 dt_ms)
+{
+	updateHelperKeys(helper.keyboard.W, dt_ms);
+	updateHelperKeys(helper.keyboard.A, dt_ms);
+	updateHelperKeys(helper.keyboard.S, dt_ms);
+	updateHelperKeys(helper.keyboard.D, dt_ms);
+}
+
+inline
+InputsHelper initHelper()
+{
+	InputsHelper helper;
+	helper.keyboard.W = { sf::Keyboard::W, 0.f };
+	helper.keyboard.A = { sf::Keyboard::A, 0.f };
+	helper.keyboard.S = { sf::Keyboard::S, 0.f };
+	helper.keyboard.D = { sf::Keyboard::D, 0.f };
+
+	return helper;
+}
+
+Inputs get_inputs(sf::Window& window, i32 delta_time_ms)
+{
+	static InputsHelper helper = initHelper();
+	updateHelper(helper, delta_time_ms);
+
 	Inputs inputs;
 	sf::Event event;
 
@@ -12,6 +72,9 @@ Inputs get_inputs(sf::Window& window)
 	inputs.shooting = false;
 	inputs.action3 = false;
 
+	inputs.delta_time = delta_time_ms / 1000.f;
+
+	// Fenetre
 	while(window.pollEvent(event))
 	{
 		// Fermeture de la fenetre
@@ -56,6 +119,12 @@ Inputs get_inputs(sf::Window& window)
 	// Recuperation de la direction1
 	vector direction1(0,0);
 	{
+#if 1
+		direction1.y -= helper.keyboard.W.strength;
+		direction1.y += helper.keyboard.S.strength;
+		direction1.x -= helper.keyboard.A.strength;
+		direction1.x += helper.keyboard.D.strength;
+#else		
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 			direction1.y -= 1;
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
@@ -64,6 +133,7 @@ Inputs get_inputs(sf::Window& window)
 			direction1.x -= 1;
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 			direction1.x += 1;
+#endif		
 	}
 	if (sf::Joystick::isConnected(0) and
 		sf::Joystick::hasAxis(0, sf::Joystick::X) and
@@ -121,6 +191,7 @@ Inputs get_inputs(sf::Window& window)
 	if(norm_direction2 > 1.f)
 		direction2 /= norm_direction2;
     inputs.direction2 = direction2;
+
 
 	return inputs;
 }
