@@ -26,9 +26,9 @@ Inputs get_inputs(sf::Window& window)
 	{
 		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
 			inputs.shooting = true;
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
-			inputs.charging_tp = true;
 		if (sf::Joystick::isConnected(0) and sf::Joystick::isButtonPressed(0, 5))
+			inputs.shooting = true;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
 			inputs.shooting = true;
 	}
 
@@ -40,7 +40,18 @@ Inputs get_inputs(sf::Window& window)
 			inputs.charging_tp = true;
 		if (sf::Joystick::isConnected(0) and sf::Joystick::isButtonPressed(0, 6))
 			inputs.charging_tp = true;
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Right))
+			inputs.charging_tp = true;
     }
+
+	
+	// Action Tertiaire
+	{
+		if (sf::Joystick::isConnected(0) and sf::Joystick::isButtonPressed(0, 1))
+			inputs.action3 = true;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+			inputs.action3 = true;
+	}
 	
 	// Recuperation de la direction1
 	vector direction1(0,0);
@@ -110,11 +121,6 @@ Inputs get_inputs(sf::Window& window)
 	if(norm_direction2 > 1.f)
 		direction2 /= norm_direction2;
     inputs.direction2 = direction2;
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-			inputs.shooting = true;
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
-			inputs.action3 = true;
 
 	return inputs;
 }
