@@ -12,6 +12,9 @@ int main()
 	const u32 FRAME_PER_SECONDS(60);
 	const i32 FRAME_LENGTH_MILLISECONDS(1000.f/FRAME_PER_SECONDS);
 
+	// TODO(Sam): On va un jour vouloir commencer a parler serieusement
+	// de memoire, tout foutre dans le stack ne va pas etre suffisant
+	// encore longtemps ...
 	GameData data;
 	game_init(data);
 	if(!load_assets(data.assets))
