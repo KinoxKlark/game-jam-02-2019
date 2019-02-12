@@ -5,6 +5,8 @@
 #include <cstdlib>
 #include <iostream>
 
+void game_apply_physic(GameData& data, r32 world_delta_time);
+
 // TODO(Sam): Nettoyer ca !
 void game_init(GameData& data)
 {
@@ -26,7 +28,7 @@ void game_init(GameData& data)
 	data.player->pos.y = 2; // units
 	data.player->max_speed = 10.f;    // units / sec
 	data.player->acceleration = 10.f; // units / sec^2
-	data.player->masse = 60.f; // 60kg
+	data.player->mass = 60.f; // 60kg
 	data.player->collision_radius = .45f; // units
 	data.player->tp_charge = 0;
 	data.player->tp_charging_speed = 3; // units / sec
@@ -37,6 +39,7 @@ void game_init(GameData& data)
 	data.player->asset_type = AssetType::PLAYER;
 	data.player->life_max = 20;
 	data.player->life = 20;
+	data.player->limit_the_speed = true;
 
     data.player->is_rolling = false;
     data.player->rolling_duration = 0.5;
@@ -102,35 +105,20 @@ void game_tick(GameData& data, Inputs& inputs)
 		{
 			data.player->time_spent_rolling += world_delta_time;
 			// vector deviation = inputs.direction1 * data.player->rolling_speed * 0.5f;
-			vector rolling_speed = data.player->rolling_speed * data.player->orientation;
-			data.player->pos += ( rolling_speed) * world_delta_time;
+
+			// TODO(Sam): Recuperation de la vitesse initiale
+			data.player->speed = data.player->rolling_speed * safe_normalise(data.player->speed);
+			data.player->acc = {0,0};
+			data.player->limit_the_speed = false;
 		}
 		else
 		{
-		
-			vector acceleration =
+			// TODO(Sam): On a une repetition du code avec les ennemis, on garde ?
+			data.player->acc = data.player->mass*(
 				inputs.direction1 * data.player->acceleration -
-				data.player->speed * friction;
+				data.player->speed * friction);
 
-			data.player->speed += data.player->masse * acceleration * world_delta_time;
-
-			r32 speed_norm = norm(data.player->speed);
-
-			//limits the speed
-			if(speed_norm > data.player->max_speed)
-				data.player->speed *= data.player->max_speed / speed_norm;
-	
-			vector wanted_pos = data.player->pos + data.player->speed * world_delta_time;
-
-#if 0		
-			for(auto& entity: data.entities)
-			{
-				// TODO(Sam): Que se passe-t-il lors de la collision ?
-				// Touche par un ennemi ...
-			}
-#endif		
-    	
-			data.player->pos = wanted_pos;			
+			data.player->limit_the_speed = true;
 		}
 
 	}
@@ -165,12 +153,11 @@ void game_tick(GameData& data, Inputs& inputs)
 				p.asset_type = AssetType::PROJECTILE;
 				p.to_destroy = false;
 
-				
 				data.projectiles.push_back(p);
 			}
 	}
 
-	// Ennemis
+	// Spawn des ennemis
 	// TODO(Sam): Gerer diffrement le cap max des entites
 	while(data.entities.size() < 4)
 	{
@@ -182,45 +169,124 @@ void game_tick(GameData& data, Inputs& inputs)
 		entity.pos.y = data.player->pos.y + distance * std::sin(angle);
 		entity.max_speed = 5.f;
 		entity.acceleration = 1.f;
-		entity.masse = 60.f; // 60kg
+		entity.mass = 60.f; // 60kg
 		entity.collision_radius = .4f;
 		entity.life_max = 5;
 		entity.life = 5;
+		entity.limit_the_speed = true;
 
 		entity.to_destroy = false;
 
 		data.entities.push_back(entity);
 	}
+	// Ennemis
 	for(auto& entity : data.entities)
 	{
+		// TODO(Sam): Gerer les types d'entites
 		if(&entity == data.player) continue;
-		
+
+		vector direction = vector(data.player->pos - entity.pos);
+
+		entity.acc = entity.mass *(
+			direction * entity.acceleration -
+			entity.speed * friction);
+
+	}
+
+	// Physique
+	game_apply_physic(data, world_delta_time);
+
+	// Camera
+	{
+		// Camera focus
+	    r32 direction2_length(norm(inputs.direction2));
+		r32 speed_factor(.1f);
+		r32 distance_upfront(1.f);
+		vector marker_1(
+			data.player->pos+data.player->orientation*distance_upfront*direction2_length
+			+ data.player->speed*speed_factor);
+
+		vector marker_2(marker_1);
+		if(data.player->tp_charge > 0)
+		{
+			// TODO(Sam): On a ce code aussi dans render, peut etre on veut garder
+			// la position du tp dans les data pour ne pas se repeter ?
+			marker_2 = data.player->pos + (data.player->tp_charge * inputs.direction1);
+		}
+
+		r32 k(0.75);
+		data.camera.focus_pos = (1.f-k)*marker_1+k*marker_2;
+
+		// Camera mouvement
+		vector direction_focus = data.camera.focus_pos - data.camera.pos;
+		r32 distance_focus = norm(direction_focus);
+		distance_focus = distance_focus < 0.01 ? 1.f : distance_focus;
+		const r32 camera_mass(20.f); // kg
+		const r32 attraction_factor(5.f);
+		const r32 camera_friction(0.9f);
+
+		vector acceleration = camera_mass*(attraction_factor*direction_focus*distance_focus
+			- camera_friction*data.camera.speed);
+
+		// TOOD(Sam): Est ce qu'on utilise la vitesse du jeu ou du monde?
+		data.camera.speed += acceleration * world_delta_time;
+		data.camera.pos += data.camera.speed * world_delta_time;
+	}
+
+
+	// Destruction des divers entites et projectiles
+    for(size_t i(0); i < data.entities.size() ; i++)
+	{
+		if(data.entities[i].to_destroy)
+		{
+			data.entities[i] = data.entities[data.entities.size()-1];
+			data.entities.pop_back();
+			i--;
+		}
+	}
+	for(size_t i(0); i < data.projectiles.size() ; i++)
+	{
+		if(data.projectiles[i].to_destroy)
+		{
+			data.projectiles[i] = data.projectiles[data.projectiles.size()-1];
+			data.projectiles.pop_back();
+			i--;
+		}
+	}
+
+	return;
+}
+
+void game_apply_physic(GameData& data, r32 world_delta_time)
+{
+	for(auto& entity : data.entities)
+	{
 		if(entity.life <= 0.f)
 		{
 			entity.to_destroy = true;
 		}
 		else
 		{
-			vector direction = vector(data.player->pos - entity.pos);
+			// Calcule de la vitesse
+			entity.speed += entity.acc * world_delta_time;
 
-			//moving
-			vector acceleration =
-				direction * entity.acceleration -
-				entity.speed * friction;
-
-			entity.speed += entity.masse * acceleration * world_delta_time;
-
-			r32 speed_norm = norm(entity.speed);
-
-			//limits the speed
-			if(speed_norm > entity.max_speed)
-				entity.speed *= entity.max_speed / speed_norm;
-
+			// Limits the speed
+			// TODO(Sam): On veut probablement trouver une
+			// facon plus elegante de gerer ou non la limite
+			// de vitesse !
+			if(entity.limit_the_speed)
+			{
+				r32 speed_norm = norm(entity.speed);
+				if(speed_norm > entity.max_speed)
+					entity.speed *= entity.max_speed / speed_norm;
+			}
+			
 #if 0			// On met temporairement en pause les entitys	
 			entity.pos += entity.speed * world_delta_time;
 #else
 			vector wanted_pos = entity.pos + entity.speed * world_delta_time;
 
+			// Gestion des collisions
 			for(auto& other_entity: data.entities)
 			{
 				if(&other_entity == &entity) continue;
@@ -275,64 +341,4 @@ void game_tick(GameData& data, Inputs& inputs)
 		}
 	}
 
-
-	// Camera
-	{
-		// Camera focus
-	    r32 direction2_length(norm(inputs.direction2));
-		r32 speed_factor(.1f);
-		r32 distance_upfront(1.f);
-		vector marker_1(
-			data.player->pos+data.player->orientation*distance_upfront*direction2_length
-			+ data.player->speed*speed_factor);
-
-		vector marker_2(marker_1);
-		if(data.player->tp_charge > 0)
-		{
-			// TODO(Sam): On a ce code aussi dans render, peut etre on veut garder
-			// la position du tp dans les data pour ne pas se repeter ?
-			marker_2 = data.player->pos + (data.player->tp_charge * inputs.direction1);
-		}
-
-		r32 k(0.75);
-		data.camera.focus_pos = (1.f-k)*marker_1+k*marker_2;
-
-		// Camera mouvement
-		vector direction_focus = data.camera.focus_pos - data.camera.pos;
-		r32 distance_focus = norm(direction_focus);
-		distance_focus = distance_focus < 0.01 ? 1.f : distance_focus;
-		const r32 camera_masse(20.f); // kg
-		const r32 attraction_factor(5.f);
-		const r32 camera_friction(0.9f);
-
-		vector acceleration = camera_masse*(attraction_factor*direction_focus*distance_focus
-			- camera_friction*data.camera.speed);
-
-		// TOOD(Sam): Est ce qu'on utilise la vitesse du jeu ou du monde?
-		data.camera.speed += acceleration * world_delta_time;
-		data.camera.pos += data.camera.speed * world_delta_time;
-	}
-
-
-	// Destruction des divers entites et projectiles
-    for(size_t i(0); i < data.entities.size() ; i++)
-	{
-		if(data.entities[i].to_destroy)
-		{
-			data.entities[i] = data.entities[data.entities.size()-1];
-			data.entities.pop_back();
-			i--;
-		}
-	}
-	for(size_t i(0); i < data.projectiles.size() ; i++)
-	{
-		if(data.projectiles[i].to_destroy)
-		{
-			data.projectiles[i] = data.projectiles[data.projectiles.size()-1];
-			data.projectiles.pop_back();
-			i--;
-		}
-	}
-
-	return;
 }

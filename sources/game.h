@@ -43,7 +43,13 @@ struct Entity {
 	// C'est des game_unit par sec etc...
     vector pos;
     vector speed;
+	vector acc;
+	
 	vector orientation;
+
+	// TODO(Sam): On veut pas garder limit_the_speed, c'est un fix
+	// temporaire
+	bool limit_the_speed;
 
 	bool to_destroy;
 
@@ -55,7 +61,7 @@ struct Entity {
 
     r32 max_speed;
     r32 acceleration;
-    r32 masse;
+    r32 mass;
 	r32 collision_radius;
     r32 life_max;
     r32 life;
