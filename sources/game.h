@@ -62,7 +62,7 @@ struct Entity {
 
 	// TODO(Sam): Est ce que les ennemis doivent avoir ca ?
 	// c'est probablement le signe qu'il faut qu'on revoie
-	// un jour le syst�me d'entity
+	// un jour le systeme d'entity
     r32 tp_charge;
     r32 tp_charging_speed;
     r32 tp_max_distance;
@@ -86,10 +86,11 @@ struct DebugInfos {
 };
 
 struct GameData {
-    Entity player;
-	Camera camera;
+	Entity* player;
+	std::vector<Entity> entities;
     std::vector<Projectile> projectiles;
-    std::vector<Entity> ennemies;
+	
+	Camera camera;
 	r32 time_factor;
 
     Assets assets;

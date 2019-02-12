@@ -35,19 +35,19 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 	player_direction.setOrigin(.1,.1);
 	player.setFillColor(sf::Color::Red);
 	player_direction.setFillColor(sf::Color::Red);
-	player.setPosition(data.player.pos.x,data.player.pos.y);
+	player.setPosition(data.player->pos.x,data.player->pos.y);
 	player_direction.setPosition(
-		data.player.pos.x + data.player.orientation.x*player_radius,
-		data.player.pos.y + data.player.orientation.y*player_radius);
+		data.player->pos.x + data.player->orientation.x*player_radius,
+		data.player->pos.y + data.player->orientation.y*player_radius);
 
 	sf::CircleShape camera_focus(.05);
 	camera_focus.setOrigin(.05,.05);
 	camera_focus.setFillColor(sf::Color::Black);
 	camera_focus.setPosition(data.camera.focus_pos.x, data.camera.focus_pos.y);
 
-	sf::CircleShape ennemies(.5);
-	ennemies.setOrigin(.5,.5);
-	ennemies.setFillColor(sf::Color::Black);
+	sf::CircleShape entities(.5);
+	entities.setOrigin(.5,.5);
+	entities.setFillColor(sf::Color::Black);
 
 	sf::CircleShape projectile(.1);
 	projectile.setOrigin(.1,.1);
@@ -73,9 +73,11 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 	window.clear(sf::Color::White);
 	
 	// Le rendu va ici...
-	for(auto& e: data.ennemies)
+	for(auto& e: data.entities)
 	{
-		ennemies.setPosition(e.pos.x,e.pos.y);
+		if(&e == data.player) continue;
+		
+		entities.setPosition(e.pos.x,e.pos.y);
 
 		life_bar_fg.setSize(
 			sf::Vector2f(life_bar_bg.getSize().x * e.life
@@ -83,16 +85,16 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 		life_bar_bg.setPosition(e.pos.x,e.pos.y - .6);
 		life_bar_fg.setPosition(e.pos.x,e.pos.y - .6);
 
-		window.draw(ennemies);
+		window.draw(entities);
 		window.draw(life_bar_bg);
 		window.draw(life_bar_fg);
 	}
 
 	life_bar_fg.setSize(
-		sf::Vector2f(life_bar_bg.getSize().x * data.player.life
-					 / data.player.life_max, life_bar_bg.getSize().y));
-	life_bar_bg.setPosition(data.player.pos.x,data.player.pos.y - .60);
-	life_bar_fg.setPosition(data.player.pos.x,data.player.pos.y - .60);
+		sf::Vector2f(life_bar_bg.getSize().x * data.player->life
+					 / data.player->life_max, life_bar_bg.getSize().y));
+	life_bar_bg.setPosition(data.player->pos.x,data.player->pos.y - .60);
+	life_bar_fg.setPosition(data.player->pos.x,data.player->pos.y - .60);
 
 	window.draw(player);
 	window.draw(life_bar_bg);
@@ -107,13 +109,13 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 		window.draw(projectile);
 	}
 
-	if(data.player.tp_charge > 0)
+	if(data.player->tp_charge > 0)
 	{
 		sf::CircleShape tp_target(.20);
 		tp_target.setOrigin(.20,.20);
 		tp_target.setFillColor(sf::Color::Green);
-		tp_target.setPosition(data.player.pos.x + (data.player.tp_charge * inputs.direction1.x),
-		data.player.pos.y + data.player.tp_charge * inputs.direction1.y);
+		tp_target.setPosition(data.player->pos.x + (data.player->tp_charge * inputs.direction1.x),
+		data.player->pos.y + data.player->tp_charge * inputs.direction1.y);
 
 		window.draw(tp_target);
 	}
