@@ -98,6 +98,7 @@ struct GameData {
 	
 	Camera camera;
 	r32 time_factor;
+	r32 ground_friction;
 
     Assets assets;
 

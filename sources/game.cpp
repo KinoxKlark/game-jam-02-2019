@@ -51,8 +51,16 @@ void game_init(GameData& data)
 	data.camera.pos.y = data.player->pos.y;
 	data.camera.speed.x = 0;
 	data.camera.speed.y = 0;
+
+	// TODO(Sam): Mettre dans un endroit plus claire
+	r32 time_to_max = .3f; // sec
 	
 	data.time_factor = 1.f;
+	data.ground_friction = -data.player->mass*std::log(1.f-0.95f)/time_to_max;
+	data.player->acceleration = data.ground_friction*data.player->max_speed;
+
+	std::cout << data.ground_friction << "\n";
+	std::cout << data.player->acceleration << "\n";
 
 	// Debug
     data.debug_infos.frame_length_milliseconds = 0;
@@ -60,7 +68,7 @@ void game_init(GameData& data)
 
 void game_tick(GameData& data, Inputs& inputs)
 {
-	r32 friction(0.5f); //Can depend on the floor
+	
 	r32 world_delta_time = data.time_factor*inputs.delta_time;
 	
 	// Slow motion
@@ -114,9 +122,9 @@ void game_tick(GameData& data, Inputs& inputs)
 		else
 		{
 			// TODO(Sam): On a une repetition du code avec les ennemis, on garde ?
-			data.player->acc = data.player->mass*(
+			data.player->acc = (
 				inputs.direction1 * data.player->acceleration -
-				data.player->speed * friction);
+				data.player->speed * data.ground_friction)/data.player->mass;
 
 			data.player->limit_the_speed = true;
 		}
@@ -168,7 +176,7 @@ void game_tick(GameData& data, Inputs& inputs)
 		entity.pos.x = data.player->pos.x + distance * std::cos(angle);
 		entity.pos.y = data.player->pos.y + distance * std::sin(angle);
 		entity.max_speed = 5.f;
-		entity.acceleration = 1.f;
+		entity.acceleration = data.ground_friction*entity.max_speed;
 		entity.mass = 60.f; // 60kg
 		entity.collision_radius = .4f;
 		entity.life_max = 5;
@@ -187,9 +195,9 @@ void game_tick(GameData& data, Inputs& inputs)
 
 		vector direction = vector(data.player->pos - entity.pos);
 
-		entity.acc = entity.mass *(
+		entity.acc = (
 			direction * entity.acceleration -
-			entity.speed * friction);
+			entity.speed * data.ground_friction)/entity.mass;
 
 	}
 
