@@ -1,6 +1,7 @@
 #include "renderer.h"
 #include "assets.h"
 
+#include <iostream>
 #include <cstdio>
 
 // TODO(Sam): Est ce qu'on met �a dans un assets.cpp ?
@@ -13,6 +14,18 @@ bool load_assets(Assets& assets)
 
 void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs)
 {
+	// Camera
+	r32 window_ratio = (r32)window.getSize().x / (r32)window.getSize().y;
+	r32 const seen_world_width(10*window_ratio), seen_world_height(10);
+	sf::View view(sf::FloatRect(0,0, seen_world_width, seen_world_height));
+	view.setCenter(data.camera.pos.x, data.camera.pos.y);
+	window.setView(view);
+
+    vector const TOP_LEFT = {data.camera.pos.x - 0.5f*seen_world_width,
+							 data.camera.pos.y - 0.5f*seen_world_height};
+	vector const BOTTOM_RIGHT =  {data.camera.pos.x + 0.5f*seen_world_width,
+								  data.camera.pos.y + 0.5f*seen_world_height};
+	
 	//lifebar
 	sf::RectangleShape life_bar_bg(sf::Vector2f(.5, .05));
 	sf::RectangleShape life_bar_fg(sf::Vector2f(.5, .05));
@@ -20,12 +33,6 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 	life_bar_fg.setOrigin(.5,.05);
 	life_bar_bg.setFillColor(sf::Color::Cyan);
 	life_bar_fg.setFillColor(sf::Color::Blue);
-
-	// Camera
-	r32 window_ratio = (r32)window.getSize().x / (r32)window.getSize().y;
-	sf::View view(sf::FloatRect(0,0, 10*window_ratio, 10));
-	view.setCenter(data.camera.pos.x, data.camera.pos.y);
-	window.setView(view);
 
 	// TODO(Sam): Fair un vrai systeme d'asset
 	r32 player_radius = .5f;
@@ -70,7 +77,43 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 
 	// end tmp
 
+	// =================================================================================
 	window.clear(sf::Color::White);
+
+#if 1
+	// Damier temporaire
+	
+	vector size = BOTTOM_RIGHT-TOP_LEFT;
+
+    r32 tile_size = 2.f;
+	u32 nb_tile_x = (u32)(size.x/tile_size)+3;
+	u32 nb_tile_y = (u32)(size.y/tile_size)+3;
+
+	i32 top_left_x = (i32)((TOP_LEFT.x-tile_size)/tile_size);
+	i32 top_left_y = (i32)((TOP_LEFT.y-tile_size)/tile_size);
+
+	top_left_x += (top_left_x)%2;
+	top_left_y += (top_left_y)%2;
+
+	top_left_x *= tile_size;
+	top_left_y *= tile_size;
+	
+	sf::RectangleShape tile({tile_size, tile_size});
+	tile.setFillColor({100,100,100});
+	for(u32 x(0); x < nb_tile_x; ++x)
+	{
+		for(u32 y(0); y < nb_tile_y; ++y)
+		{
+			if((top_left_x+x)%2 == (top_left_y+y)%2)
+			{
+				tile.setPosition(top_left_x + x*tile_size,
+								 top_left_y + y*tile_size);
+				window.draw(tile);
+			}
+		}
+	}
+							 
+#endif	
 	
 	// Le rendu va ici...
 	for(auto& e: data.entities)
