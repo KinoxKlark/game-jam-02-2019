@@ -7,17 +7,24 @@
 
 #include <vector>
 
+struct Entity;
+
 enum WeaponType {
-    GT_pistol
+    GT_pistol,
+    GT_swapper,
 };
 
 enum ProjectileType {
-    PT_pistol_bullet
+    PT_pistol_bullet,
+    PT_swap_bullet,
 };
 
 // TODO(Sam): On devrait pas merge avec le concepte d'entity ?
 struct Projectile {
     ProjectileType type;
+
+    Entity* user;
+
     r32 life_time;
     r32 speed;
     vector pos;
@@ -32,6 +39,8 @@ struct Projectile {
 struct Weapon {
     WeaponType type;
     ProjectileType projectile_type;
+
+    Entity* user;
 
     //used to avoid weapon spam.
     r32 cooldown;

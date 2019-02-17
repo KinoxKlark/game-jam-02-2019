@@ -148,6 +148,11 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 
 	for(auto& p: data.projectiles)
 	{
+		if(p.type == PT_swap_bullet)
+			projectile.setFillColor(sf::Color::Red);
+		else
+			projectile.setFillColor(sf::Color::Blue);
+			
 		projectile.setPosition(p.pos.x,p.pos.y);
 		window.draw(projectile);
 	}

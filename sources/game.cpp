@@ -11,11 +11,22 @@ void game_apply_physic(GameData& data, r32 world_delta_time);
 void game_init(GameData& data)
 {
 	Weapon player_weapon;
-	player_weapon.type = GT_pistol;
-	player_weapon.projectile_type = PT_pistol_bullet;
-	player_weapon.cooldown = 0.2; // sec
-	player_weapon.used = false;
-	player_weapon.waited_time = 0;
+	// player_weapon.type = GT_pistol;
+	player_weapon.type = GT_swapper;
+	if(player_weapon.type == GT_swapper)
+	{
+		player_weapon.projectile_type = PT_swap_bullet;
+		player_weapon.cooldown = 1; // sec
+		player_weapon.used = false;
+		player_weapon.waited_time = 0;
+	}
+	else
+	{
+		player_weapon.projectile_type = PT_pistol_bullet;
+		player_weapon.cooldown = 0.2; // sec
+		player_weapon.used = false;
+		player_weapon.waited_time = 0;
+	}
 
 	// Entities
 	data.projectiles = std::vector<Projectile>(500);
@@ -36,6 +47,7 @@ void game_init(GameData& data)
 	data.player->orientation.x = 0; // Unitlength vector
 	data.player->orientation.y = 1;
 	data.player->weapon = player_weapon;
+	data.player->weapon.user = data.player;
 	data.player->asset_type = AssetType::PLAYER;
 	data.player->life_max = 20;
 	data.player->life = 20;
@@ -149,7 +161,22 @@ void game_tick(GameData& data, Inputs& inputs)
 	{
 			data.player->weapon.used = true;
 			// TODO(Sam): Est ce qu'on fera pas une fonction pour cr�er ces entit�s ?
-			if(data.player->weapon.type == GT_pistol)
+			if(data.player->weapon.type == GT_swapper)
+			{
+				Projectile p;
+				p.type = PT_swap_bullet;
+				p.life_time = 4;
+				p.speed = 10;
+				p.dommage = 0;
+				p.pos = data.player->pos;
+				p.direction = data.player->orientation;
+				p.asset_type = AssetType::PROJECTILE;
+				p.to_destroy = false;
+				p.user = data.player;
+
+				data.projectiles.push_back(p);
+			}
+			else
 			{
 				Projectile p;
 				p.type = PT_pistol_bullet;
@@ -160,6 +187,7 @@ void game_tick(GameData& data, Inputs& inputs)
 				p.direction = data.player->orientation;
 				p.asset_type = AssetType::PROJECTILE;
 				p.to_destroy = false;
+				p.user = data.player;
 
 				data.projectiles.push_back(p);
 			}
@@ -338,7 +366,15 @@ void game_apply_physic(GameData& data, r32 world_delta_time)
 		    
 				if(distance < entity.collision_radius)
 				{
-					entity.life -= projectile.dommage;
+					//TODO(Dav): Utiliser un booleen pour savoir s'il faut swap et tjr appliquer les dégats(mettre les dégàt de l'arme à 0?)?
+					if(projectile.type == PT_swap_bullet)
+					{
+						vector tmp = entity.pos;
+						entity.pos = projectile.user->pos;
+						projectile.user->pos = tmp;
+					}
+					else
+						entity.life -= projectile.dommage;
 					projectile.to_destroy = true;
 				}
 			}
