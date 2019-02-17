@@ -9,6 +9,11 @@
 
 struct Entity;
 
+enum EntityType {
+    ET_player,
+    ET_alien,
+};
+
 enum WeaponType {
     GT_pistol,
     GT_swapper,
@@ -49,6 +54,8 @@ struct Weapon {
 };
 
 struct Entity {
+    EntityType type;
+
 	// C'est des game_unit par sec etc...
     vector pos;
     vector speed;

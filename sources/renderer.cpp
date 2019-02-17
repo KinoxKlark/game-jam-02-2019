@@ -118,7 +118,7 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 	// Le rendu va ici...
 	for(auto& e: data.entities)
 	{
-		if(&e == data.player) continue;
+		if(e.type == ET_player) continue;
 		
 		entities.setPosition(e.pos.x,e.pos.y);
 

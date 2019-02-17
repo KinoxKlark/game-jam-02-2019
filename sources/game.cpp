@@ -34,6 +34,7 @@ void game_init(GameData& data)
 	
 	// Player
 	data.player = &(data.entities[0]);
+	data.player->type = ET_player;
 	data.player->to_destroy = false;
 	data.player->pos.x = 3; // units
 	data.player->pos.y = 2; // units
@@ -201,6 +202,7 @@ void game_tick(GameData& data, Inputs& inputs)
 		r32 distance = 10.f;
 		
 	    Entity entity;
+		entity.type = ET_alien;
 		entity.pos.x = data.player->pos.x + distance * std::cos(angle);
 		entity.pos.y = data.player->pos.y + distance * std::sin(angle);
 		entity.max_speed = 5.f;
