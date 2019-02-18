@@ -71,6 +71,7 @@ Inputs get_inputs(sf::Window& window, i32 delta_time_ms)
 	inputs.charging_tp = false;
 	inputs.shooting = false;
 	inputs.action3 = false;
+	inputs.action4 = false;
 
 	inputs.delta_time = delta_time_ms / 1000.f;
 
@@ -114,6 +115,11 @@ Inputs get_inputs(sf::Window& window, i32 delta_time_ms)
 			inputs.action3 = true;
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
 			inputs.action3 = true;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
+			inputs.action4 = true;
+		// if (event.type == sf::Event::KeyPressed and event.key.code == sf::Keyboard::E)
+		// 	inputs.action4 = true;
+			
 	}
 	
 	// Recuperation de la direction1

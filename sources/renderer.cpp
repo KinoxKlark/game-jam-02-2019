@@ -14,6 +14,7 @@ bool load_assets(Assets& assets)
 
 void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs)
 {
+
 	// Camera
 	r32 window_ratio = (r32)window.getSize().x / (r32)window.getSize().y;
 	r32 const seen_world_width(10*window_ratio), seen_world_height(10);
@@ -166,6 +167,28 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 		data.player->pos.y + data.player->tp_charge * inputs.direction1.y);
 
 		window.draw(tp_target);
+	}
+
+	//TODO(Dav)
+	//This camera let draw static elements, use another view instead?
+	sf::Vector2f topLeftOfWindow = window.mapPixelToCoords(sf::Vector2i(0, 0));
+	for(size_t i(0); i < data.player->weapons.size(); i++)
+	{
+		r32 width(1);
+		r32 thickness(0.1);
+
+		sf::RectangleShape box(sf::Vector2f(width,width));
+
+		if(data.player->weapon_id == i)
+			box.setFillColor(sf::Color::Yellow);
+		else
+			box.setFillColor(sf::Color::Transparent);
+
+		box.setOutlineThickness(0.1);
+		box.setOutlineColor(sf::Color::Black);
+
+		box.setPosition(i*(width+ thickness)+topLeftOfWindow.x + 4, 8 + topLeftOfWindow.y);
+		window.draw(box);
 	}
 
 	window.draw(text);

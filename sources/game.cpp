@@ -7,26 +7,35 @@
 
 void game_apply_physic(GameData& data, r32 world_delta_time);
 
-// TODO(Sam): Nettoyer ca !
-void game_init(GameData& data)
+Weapon createWeapon(WeaponType type)
 {
-	Weapon player_weapon;
+	Weapon weapon;
 	// player_weapon.type = GT_pistol;
-	player_weapon.type = GT_swapper;
-	if(player_weapon.type == GT_swapper)
+	weapon.type = type;
+	if(weapon.type == GT_swapper)
 	{
-		player_weapon.projectile_type = PT_swap_bullet;
-		player_weapon.cooldown = 1; // sec
-		player_weapon.used = false;
-		player_weapon.waited_time = 0;
+		weapon.projectile_type = PT_swap_bullet;
+		weapon.cooldown = 1; // sec
+		weapon.used = false;
+		weapon.waited_time = 0;
 	}
 	else
 	{
-		player_weapon.projectile_type = PT_pistol_bullet;
-		player_weapon.cooldown = 0.2; // sec
-		player_weapon.used = false;
-		player_weapon.waited_time = 0;
+		weapon.projectile_type = PT_pistol_bullet;
+		weapon.cooldown = 0.2; // sec
+		weapon.used = false;
+		weapon.waited_time = 0;
 	}
+
+	return weapon;
+}
+
+// TODO(Sam): Nettoyer ca !
+void game_init(GameData& data)
+{
+	// Weapon player_weapon(createWeapon(GT_pistol));
+	// player_weapon.type = GT_pistol;
+	// player_weapon.type = GT_swapper;
 
 	// Entities
 	data.projectiles = std::vector<Projectile>(500);
@@ -47,8 +56,14 @@ void game_init(GameData& data)
 	data.player->tp_max_distance = 5;   // units
 	data.player->orientation.x = 0; // Unitlength vector
 	data.player->orientation.y = 1;
-	data.player->weapon = player_weapon;
-	data.player->weapon.user = data.player;
+
+	data.player->weapons = std::vector<Weapon>(6);
+	data.player->weapons[0] = createWeapon(GT_pistol);
+	data.player->weapons[1] = createWeapon(GT_swapper);
+	data.player->weapons[0].user = data.player;
+	data.player->weapons[1].user = data.player;
+	data.player->weapon = data.player->weapons[0];
+
 	data.player->asset_type = AssetType::PLAYER;
 	data.player->life_max = 20;
 	data.player->life = 20;
@@ -89,6 +104,16 @@ void game_tick(GameData& data, Inputs& inputs)
 	// C'est pour ce genre de test que le nom charging_tp n'est pas
 	// du tout adapte, ici ce qu'on veut dire c'est : si l'action
 	// secondaire est en cours alors ralentir le temps
+
+	//TODO(Dav): Changement d'arme, utiliser une référence sur le tableau plutot
+	if(inputs.action4)
+	{
+		data.player->weapon_id += 1;
+		if(data.player->weapon_id >= data.player->weapons.size() or data.player->weapon_id < 0)
+			data.player->weapon_id = 0;
+		data.player->weapon = data.player->weapons[data.player->weapon_id];
+	}
+
 	if(inputs.charging_tp == true)
 	{
 		data.time_factor = 0.2f;
@@ -161,7 +186,7 @@ void game_tick(GameData& data, Inputs& inputs)
 	if(inputs.shooting and !data.player->weapon.used and !data.player->is_rolling)
 	{
 			data.player->weapon.used = true;
-			// TODO(Sam): Est ce qu'on fera pas une fonction pour cr�er ces entit�s ?
+			// TODO(Sam): Est ce qu'on fera pas une fonction pour cr�er ces entit�s ? Ràp Dav: oui c'est ce que je voulais faire au début, faire des switch
 			if(data.player->weapon.type == GT_swapper)
 			{
 				Projectile p;
@@ -177,7 +202,7 @@ void game_tick(GameData& data, Inputs& inputs)
 
 				data.projectiles.push_back(p);
 			}
-			else
+			else if(data.player->weapon.type == GT_pistol)
 			{
 				Projectile p;
 				p.type = PT_pistol_bullet;

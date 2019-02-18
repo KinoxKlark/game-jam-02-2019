@@ -15,6 +15,7 @@ struct Inputs {
     bool charging_tp;
     bool shooting;
     bool action3;
+    bool action4;
 	
 	sf::Vector2i mouse_pos_tmp;
 	sf::Vector2u winsize_tmp;

@@ -10,16 +10,19 @@
 struct Entity;
 
 enum EntityType {
+    ET_None, //Valeure par défaut
     ET_player,
     ET_alien,
 };
 
 enum WeaponType {
+    GT_None, //Quand pas d'arme, valeure par défaut
     GT_pistol,
     GT_swapper,
 };
 
 enum ProjectileType {
+    PT_None, //Quand pas de projectile, valeure par défaut
     PT_pistol_bullet,
     PT_swap_bullet,
 };
@@ -52,6 +55,8 @@ struct Weapon {
     r32 waited_time;
     bool used;
 };
+
+Weapon createWeapon(WeaponType type);
 
 struct Entity {
     EntityType type;
@@ -90,6 +95,8 @@ struct Entity {
     r32 tp_max_distance;
 
     Weapon weapon;
+    std::vector<Weapon> weapons;
+    size_t weapon_id; //indew of the weapon in weapons
 
     AssetType asset_type;
 };
