@@ -1,0 +1,46 @@
+v24.02.19:
+{
+    Changement d'arme,
+    téléportation,
+    Déplacement,
+    Tir,
+
+    colision projectiles - Entities,
+
+    spawn des ennemies,
+    Action des ennemies,
+
+    Physique du jeu (colision),
+
+    Mouvement de caméra,
+
+    cleanup de GameData,
+}
+
+défauts:
+    la gestion du player et des ennemies est différente, les 2 devraient se baser sur une structure d'inputs.
+    Ce qui fait que les 4ères actions concernent que le joueur et ce qui concerne les ennemies est séparé
+
+
+Proposition:
+{   
+    Spawn Entity,
+
+    action Entity: {
+        Set des états,
+        Déplacement,
+        téléportation,
+        Changement d'arme,
+        Tir,
+    },
+
+    Physique du jeu (colision),
+
+    Caméra,
+
+    cleanup de GameData,
+}
+
+Questions:
+    Le spawn des Entity avant les actions du player font qu'elles auront un temps de retard sur lui, ce qui rend un coté humain. Est-ce un problème?
+    Je préfère ça plutôt que de leur faire rater leur 1er tour d'actions.

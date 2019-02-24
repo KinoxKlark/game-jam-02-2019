@@ -136,4 +136,9 @@ void clean_up_entities(GameData& data);
 void clean_up_projectiles(GameData& data);
 void clean_up(GameData& data);
 
+
+void game_apply_physic_entities(GameData& data, r32 world_delta_time);
+void game_apply_physic_projectiles(GameData& data, r32 world_delta_time);
+void game_apply_physic(GameData& data, r32 world_delta_time);
+
 #endif

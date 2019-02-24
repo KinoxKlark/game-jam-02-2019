@@ -5,8 +5,6 @@
 #include <cstdlib>
 #include <iostream>
 
-void game_apply_physic(GameData& data, r32 world_delta_time);
-
 Weapon createWeapon(WeaponType type, Entity* user)
 {
 	Weapon weapon;
@@ -171,121 +169,6 @@ void game_tick(GameData& data, Inputs& inputs)
 	// du tout adapte, ici ce qu'on veut dire c'est : si l'action
 	// secondaire est en cours alors ralentir le temps
 
-	//TODO(Dav): Changement d'arme, utiliser une référence sur le tableau plutot
-	if(inputs.action4)
-	{
-		data.player->weapon_id += 1;
-		if(data.player->weapon_id >= data.player->weapons.size() or data.player->weapon_id < 0)
-			data.player->weapon_id = 0;
-		data.player->weapon = data.player->weapons[data.player->weapon_id];
-	}
-
-	if(inputs.charging_tp == true)
-	{
-		data.time_factor = 0.2f;
-	}
-	else
-	{
-		data.time_factor = 1.f;
-	}
-	
-	//teleportation
-	if(inputs.charging_tp == true)
-	{
-		data.player->tp_charge += inputs.delta_time * data.player->tp_charging_speed;
-		if(data.player->tp_charge > data.player->tp_max_distance)
-			data.player->tp_charge = data.player->tp_max_distance;
-	}
-	else if(data.player->tp_charge)
-	{
-		data.player->pos += data.player->tp_charge * inputs.direction1;
-		data.player->tp_charge = 0;
-	}
-	
-	//moving
-	{
-		if(inputs.action3)
-			data.player->is_rolling = true;
-
-		if(data.player->time_spent_rolling > data.player->rolling_duration)
-		{
-			data.player->time_spent_rolling = 0;
-			data.player->is_rolling = false;
-		}
-
-		if(data.player->is_rolling)
-		{
-			data.player->time_spent_rolling += world_delta_time;
-			// vector deviation = inputs.direction1 * data.player->rolling_speed * 0.5f;
-
-			// TODO(Sam): Recuperation de la vitesse initiale
-			data.player->speed = data.player->rolling_speed * safe_normalise(data.player->speed);
-			data.player->acc = {0,0};
-			data.player->limit_the_speed = false;
-		}
-		else
-		{
-			// TODO(Sam): On a une repetition du code avec les ennemis, on garde ?
-			data.player->acc = (
-				inputs.direction1 * data.player->acceleration -
-				data.player->speed * data.ground_friction)/data.player->mass;
-
-			data.player->limit_the_speed = true;
-		}
-
-	}
-	
-	//shooting
-	r32 direction2_length(norm(inputs.direction2));
-	if(direction2_length > 0.1) // TODO(Sam): Quelle sensibilite ?
-		data.player->orientation = inputs.direction2 / direction2_length;
-
-	if(data.player->weapon.used)
-		data.player->weapon.waited_time += world_delta_time;
-
-	if(data.player->weapon.waited_time > data.player->weapon.cooldown)
-	{
-		data.player->weapon.waited_time = 0;
-		data.player->weapon.used = false;
-	}
-
-	//Colision projectiles - Entities
-	if(inputs.shooting and !data.player->weapon.used and !data.player->is_rolling)
-	{
-			data.player->weapon.used = true;
-			// TODO(Sam): Est ce qu'on fera pas une fonction pour cr�er ces entit�s ? Ràp Dav: oui c'est ce que je voulais faire au début, faire des switch
-			if(data.player->weapon.type == GT_swapper)
-			{
-				Projectile p;
-				p.type = PT_swap_bullet;
-				p.life_time = 4;
-				p.speed = 10;
-				p.dommage = 0;
-				p.pos = data.player->pos;
-				p.direction = data.player->orientation;
-				p.asset_type = AssetType::PROJECTILE;
-				p.to_destroy = false;
-				p.user = data.player;
-
-				data.projectiles.push_back(p);
-			}
-			else if(data.player->weapon.type == GT_pistol)
-			{
-				Projectile p;
-				p.type = PT_pistol_bullet;
-				p.life_time = 4;
-				p.speed = 10;
-				p.dommage = 1;
-				p.pos = data.player->pos;
-				p.direction = data.player->orientation;
-				p.asset_type = AssetType::PROJECTILE;
-				p.to_destroy = false;
-				p.user = data.player;
-
-				data.projectiles.push_back(p);
-			}
-	}
-
 	// Spawn des ennemis
 	// TODO(Sam): Gerer diffrement le cap max des entites
 	while(data.entities.size() < 4)
@@ -300,7 +183,125 @@ void game_tick(GameData& data, Inputs& inputs)
 		entity.acceleration = data.ground_friction*entity.max_speed;
 		data.entities.push_back(entity);
 	}
-	// Ennemis
+
+	//Actions du joueur
+	{
+		//TODO(Dav): Changement d'arme, utiliser une référence sur le tableau plutot
+		if(inputs.action4)
+		{
+			data.player->weapon_id += 1;
+			if(data.player->weapon_id >= data.player->weapons.size() or data.player->weapon_id < 0)
+				data.player->weapon_id = 0;
+			data.player->weapon = data.player->weapons[data.player->weapon_id];
+		}
+
+		if(inputs.charging_tp == true)
+		{
+			data.time_factor = 0.2f;
+		}
+		else
+		{
+			data.time_factor = 1.f;
+		}
+		
+		//teleportation
+		if(inputs.charging_tp == true)
+		{
+			data.player->tp_charge += inputs.delta_time * data.player->tp_charging_speed;
+			if(data.player->tp_charge > data.player->tp_max_distance)
+				data.player->tp_charge = data.player->tp_max_distance;
+		}
+		else if(data.player->tp_charge)
+		{
+			data.player->pos += data.player->tp_charge * inputs.direction1;
+			data.player->tp_charge = 0;
+		}
+		
+		//moving
+		{
+			if(inputs.action3)
+				data.player->is_rolling = true;
+
+			if(data.player->time_spent_rolling > data.player->rolling_duration)
+			{
+				data.player->time_spent_rolling = 0;
+				data.player->is_rolling = false;
+			}
+
+			if(data.player->is_rolling)
+			{
+				data.player->time_spent_rolling += world_delta_time;
+				// vector deviation = inputs.direction1 * data.player->rolling_speed * 0.5f;
+
+				// TODO(Sam): Recuperation de la vitesse initiale
+				data.player->speed = data.player->rolling_speed * safe_normalise(data.player->speed);
+				data.player->acc = {0,0};
+				data.player->limit_the_speed = false;
+			}
+			else
+			{
+				// TODO(Sam): On a une repetition du code avec les ennemis, on garde ?
+				data.player->acc = (
+					inputs.direction1 * data.player->acceleration -
+					data.player->speed * data.ground_friction)/data.player->mass;
+
+				data.player->limit_the_speed = true;
+			}
+
+		}
+		
+		//shooting
+		r32 direction2_length(norm(inputs.direction2));
+		if(direction2_length > 0.1) // TODO(Sam): Quelle sensibilite ?
+			data.player->orientation = inputs.direction2 / direction2_length;
+
+		if(data.player->weapon.used)
+			data.player->weapon.waited_time += world_delta_time;
+
+		if(data.player->weapon.waited_time > data.player->weapon.cooldown)
+		{
+			data.player->weapon.waited_time = 0;
+			data.player->weapon.used = false;
+		}
+
+		if(inputs.shooting and !data.player->weapon.used and !data.player->is_rolling)
+		{
+				data.player->weapon.used = true;
+				// TODO(Sam): Est ce qu'on fera pas une fonction pour cr�er ces entit�s ? Ràp Dav: oui c'est ce que je voulais faire au début, faire des switch
+				if(data.player->weapon.type == GT_swapper)
+				{
+					Projectile p;
+					p.type = PT_swap_bullet;
+					p.life_time = 4;
+					p.speed = 10;
+					p.dommage = 0;
+					p.pos = data.player->pos;
+					p.direction = data.player->orientation;
+					p.asset_type = AssetType::PROJECTILE;
+					p.to_destroy = false;
+					p.user = data.player;
+
+					data.projectiles.push_back(p);
+				}
+				else if(data.player->weapon.type == GT_pistol)
+				{
+					Projectile p;
+					p.type = PT_pistol_bullet;
+					p.life_time = 4;
+					p.speed = 10;
+					p.dommage = 1;
+					p.pos = data.player->pos;
+					p.direction = data.player->orientation;
+					p.asset_type = AssetType::PROJECTILE;
+					p.to_destroy = false;
+					p.user = data.player;
+
+					data.projectiles.push_back(p);
+				}
+		}
+	}
+
+	// Ennemis IA
 	for(auto& entity : data.entities)
 	{
 		// TODO(Sam): Gerer les types d'entites
@@ -313,6 +314,7 @@ void game_tick(GameData& data, Inputs& inputs)
 			entity.speed * data.ground_friction)/entity.mass;
 
 	}
+
 
 	// Physique
 	game_apply_physic(data, world_delta_time);
@@ -361,7 +363,8 @@ void game_tick(GameData& data, Inputs& inputs)
 	return;
 }
 
-void game_apply_physic(GameData& data, r32 world_delta_time)
+
+void game_apply_physic_entities(GameData& data, r32 world_delta_time)
 {
 	for(auto& entity : data.entities)
 	{
@@ -411,9 +414,10 @@ void game_apply_physic(GameData& data, r32 world_delta_time)
 #endif	
 		}	
 	}
+}
 
-
-	// Projectiles
+void game_apply_physic_projectiles(GameData& data, r32 world_delta_time)
+{
 	for(auto& projectile : data.projectiles)
 	{
 		if(projectile.life_time > 0)
@@ -452,5 +456,12 @@ void game_apply_physic(GameData& data, r32 world_delta_time)
 			projectile.to_destroy = true;
 		}
 	}
+}
 
+void game_apply_physic(GameData& data, r32 world_delta_time)
+{
+	// Entities
+	game_apply_physic_entities(data,world_delta_time);
+	// Projectiles
+	game_apply_physic_projectiles(data,world_delta_time);
 }
