@@ -116,6 +116,7 @@ struct DebugInfos {
 
 struct GameData {
 	Entity* player;
+    InputsConfig player_inputs_config;
 	std::vector<Entity> entities;
     std::vector<Projectile> projectiles;
 	

@@ -21,8 +21,28 @@ struct Inputs {
 	sf::Vector2u winsize_tmp;
 };
 
+// TODO(Dav):
+//      Plus généraliser pour pouvoir faire "if(config.up)"
+//      Permettre autre chose que la configuration des touches? (ex: mouse click?)
+//      InputsConfig est lié au joueur: attribut de GameData?
+struct InputsConfig {
+    // sf::Keyboard::isKeyPressed
+    sf::Keyboard::Key
+		up,
+		down,
+		left,
+		right,
+        charging_tp,
+        shooting;
+    // sf::Mouse::isButtonPressed
+    // sf::Mouse::Button
+    //     shooting;
+};
+
+InputsConfig get_inputs_config();
+
 Inputs default_inputs();
 
-Inputs get_inputs(sf::Window& window, i32 delta_time_ms);
+Inputs get_inputs(sf::Window& window,InputsConfig inputs_config, i32 delta_time_ms);
 
 #endif

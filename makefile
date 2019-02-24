@@ -37,7 +37,7 @@ game: main.o game.o renderer.o inputs.o copy_dll build_dir
 main.o: $(SOURCES_DIR)/main.cpp $(SOURCES_DIR)/intrinsic.h objects_dir
 	$(GCC) $(GCC_FLAGS) -c $(SOURCES_DIR)/main.cpp -o $(OBJECTS_DIR)/main.o
 
-game.o: $(SOURCES_DIR)/game.cpp $(SOURCES_DIR)/game.h $(SOURCES_DIR)/intrinsic.h  objects_dir
+game.o: $(SOURCES_DIR)/game.cpp $(SOURCES_DIR)/game.h $(SOURCES_DIR)/inputs.h $(SOURCES_DIR)/intrinsic.h  objects_dir
 	$(GCC) $(GCC_FLAGS) -c $(SOURCES_DIR)/game.cpp -o $(OBJECTS_DIR)/game.o
 
 renderer.o: $(SOURCES_DIR)/renderer.cpp $(SOURCES_DIR)/renderer.h $(SOURCES_DIR)/intrinsic.h  objects_dir

@@ -1,5 +1,6 @@
 #include "inputs.h"
 #include "intrinsic.h"
+#include "inputs.h"
 
 #include <iostream>
 
@@ -18,7 +19,7 @@ struct InputsHelper {
 	Keyboard keyboard;
 };
 
-inline
+
 void updateHelperKeys(InputsHelper::Keyboard::Key& key, i32 dt_ms)
 {
 	constexpr r32 KEY_ATTACK_SPEED = 1.f / 200.f;
@@ -37,7 +38,7 @@ void updateHelperKeys(InputsHelper::Keyboard::Key& key, i32 dt_ms)
 
 }
 
-inline
+
 void updateHelper(InputsHelper& helper, i32 dt_ms)
 {
 	updateHelperKeys(helper.keyboard.W, dt_ms);
@@ -46,16 +47,33 @@ void updateHelper(InputsHelper& helper, i32 dt_ms)
 	updateHelperKeys(helper.keyboard.D, dt_ms);
 }
 
-inline
-InputsHelper initHelper()
+
+InputsHelper initHelper(InputsConfig config)
 {
 	InputsHelper helper;
-	helper.keyboard.W = { sf::Keyboard::W, 0.f };
-	helper.keyboard.A = { sf::Keyboard::A, 0.f };
-	helper.keyboard.S = { sf::Keyboard::S, 0.f };
-	helper.keyboard.D = { sf::Keyboard::D, 0.f };
+	helper.keyboard.W = { config.up, 0.f };
+	helper.keyboard.A = { config.left, 0.f };
+	helper.keyboard.S = { config.down, 0.f };
+	helper.keyboard.D = { config.right, 0.f };
 
 	return helper;
+}
+
+// TODO(Dav): Pouvoir charger une config depuis un fichier externe
+// 
+InputsConfig get_inputs_config(){
+	InputsConfig conf;
+	// sf::Keyboard::isKeyPressed
+	conf.up = sf::Keyboard::W;
+	conf.down = sf::Keyboard::S;
+	conf.left = sf::Keyboard::A;
+	conf.right = sf::Keyboard::D;
+	conf.charging_tp = sf::Keyboard::C;
+	conf.shooting = sf::Keyboard::Space;
+
+	// sf::Mouse::isButtonPressed
+	// conf.shooting = sf::Mouse::Button::Left;
+	return conf;
 }
 
 
@@ -74,9 +92,11 @@ Inputs default_inputs()
 	return inputs;
 }
 
-Inputs get_inputs(sf::Window& window, i32 delta_time_ms)
+//Prends en paramètre la config du joueur, semble logique, mais est-ce bien?
+// Proposition: renommer en get_player_inputs et prendre un paramètre supplémentaire désignant le player (Nécessaire pour jouer en ligne)
+Inputs get_inputs(sf::Window& window,InputsConfig inputs_config, i32 delta_time_ms)
 {
-	static InputsHelper helper = initHelper();
+	static InputsHelper helper = initHelper(inputs_config);
 	updateHelper(helper, delta_time_ms);
 
 	// Create inputs
@@ -110,7 +130,7 @@ Inputs get_inputs(sf::Window& window, i32 delta_time_ms)
 
 	// Action Secondaire
 	{
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::C))
+		if (sf::Keyboard::isKeyPressed(inputs_config.charging_tp))
 			inputs.charging_tp = true;
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
 			inputs.charging_tp = true;

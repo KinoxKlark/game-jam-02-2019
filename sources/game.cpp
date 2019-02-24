@@ -105,6 +105,9 @@ void game_init(GameData& data)
 	data.player->weapons[1] = createWeapon(GT_swapper,data.player);
 	data.player->weapon = data.player->weapons[0];
 
+	// Player Inputs Config
+	data.player_inputs_config = get_inputs_config();
+
 	// Camera
 	data.camera.pos.x = data.player->pos.x;
 	data.camera.pos.y = data.player->pos.y;
