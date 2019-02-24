@@ -96,10 +96,6 @@ Entity createEntity(EntityType type)
 // TODO(Sam): Nettoyer ca !
 void game_init(GameData& data)
 {
-	// Weapon player_weapon(createWeapon(GT_pistol));
-	// player_weapon.type = GT_pistol;
-	// player_weapon.type = GT_swapper;
-
 	// Entities
 	data.projectiles = std::vector<Projectile>(500);
 	data.entities = std::vector<Entity>(500);
@@ -129,6 +125,39 @@ void game_init(GameData& data)
 
 	// Debug
     data.debug_infos.frame_length_milliseconds = 0;
+}
+
+void clean_up_entities(GameData& data)
+{   
+	for(size_t i(0); i < data.entities.size() ; i++)
+	{
+		if(data.entities[i].to_destroy)
+		{
+			data.entities[i] = data.entities[data.entities.size()-1];
+			data.entities.pop_back();
+			i--;
+		}
+	}
+
+}
+
+void clean_up_projectiles(GameData& data)
+{
+	for(size_t i(0); i < data.projectiles.size() ; i++)
+	{
+		if(data.projectiles[i].to_destroy)
+		{
+			data.projectiles[i] = data.projectiles[data.projectiles.size()-1];
+			data.projectiles.pop_back();
+			i--;
+		}
+	}
+}
+
+void clean_up(GameData& data)
+{
+	clean_up_entities(data);
+	clean_up_projectiles(data);
 }
 
 void game_tick(GameData& data, Inputs& inputs)
@@ -220,6 +249,7 @@ void game_tick(GameData& data, Inputs& inputs)
 		data.player->weapon.used = false;
 	}
 
+	//Colision projectiles - Entities
 	if(inputs.shooting and !data.player->weapon.used and !data.player->is_rolling)
 	{
 			data.player->weapon.used = true;
@@ -326,24 +356,7 @@ void game_tick(GameData& data, Inputs& inputs)
 
 
 	// Destruction des divers entites et projectiles
-    for(size_t i(0); i < data.entities.size() ; i++)
-	{
-		if(data.entities[i].to_destroy)
-		{
-			data.entities[i] = data.entities[data.entities.size()-1];
-			data.entities.pop_back();
-			i--;
-		}
-	}
-	for(size_t i(0); i < data.projectiles.size() ; i++)
-	{
-		if(data.projectiles[i].to_destroy)
-		{
-			data.projectiles[i] = data.projectiles[data.projectiles.size()-1];
-			data.projectiles.pop_back();
-			i--;
-		}
-	}
+	clean_up(data);
 
 	return;
 }

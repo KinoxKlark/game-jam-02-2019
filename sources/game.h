@@ -132,4 +132,8 @@ void game_tick(GameData& data, Inputs& inputs);
 void game_init(GameData& data);
 Entity createEntity(EntityType type);
 
+void clean_up_entities(GameData& data);
+void clean_up_projectiles(GameData& data);
+void clean_up(GameData& data);
+
 #endif
