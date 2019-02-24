@@ -12,7 +12,8 @@ struct InputsHelper {
 		};
 
 		// TODO(Sam): Est ce qu'on veut gerer ca avec
-		// une map a terme ?
+		// une map a terme ? David: le fonctionnement ne dépendra pas de la config,
+		// la config donne les valeurs à l'initalisation
 		Key W, A, S, D;
 	};
 
@@ -60,7 +61,7 @@ InputsHelper initHelper(InputsConfig config)
 }
 
 // TODO(Dav): Pouvoir charger une config depuis un fichier externe
-// 
+//						renommer en "défault config" quand on aura un autre moyen de charger la config
 InputsConfig get_inputs_config(){
 	InputsConfig conf;
 	// sf::Keyboard::isKeyPressed
@@ -70,6 +71,9 @@ InputsConfig get_inputs_config(){
 	conf.right = sf::Keyboard::D;
 	conf.charging_tp = sf::Keyboard::C;
 	conf.shooting = sf::Keyboard::Space;
+	conf.action3 = sf::Keyboard::R;
+	conf.action4 = sf::Keyboard::E;
+	conf.escape = sf::Keyboard::Escape;
 
 	// sf::Mouse::isButtonPressed
 	// conf.shooting = sf::Mouse::Button::Left;
@@ -113,8 +117,12 @@ Inputs get_inputs(sf::Window& window,InputsConfig inputs_config, i32 delta_time_
 		// Fermeture de la fenetre
 		if(event.type == sf::Event::Closed or
 		   (event.type == sf::Event::KeyPressed and
-			event.key.code == sf::Keyboard::Escape))
+			event.key.code == inputs_config.escape))
 			inputs.quit_game = true;
+		if (event.type == sf::Event::KeyPressed and
+				event.key.code == inputs_config.action4)
+			inputs.action4 = true;
+		
 			
 	}
 
@@ -124,12 +132,13 @@ Inputs get_inputs(sf::Window& window,InputsConfig inputs_config, i32 delta_time_
 			inputs.shooting = true;
 		if (sf::Joystick::isConnected(0) and sf::Joystick::isButtonPressed(0, 5))
 			inputs.shooting = true;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+		if (sf::Keyboard::isKeyPressed(inputs_config.shooting))
 			inputs.shooting = true;
 	}
 
 	// Action Secondaire
 	{
+		// Doublons de touche pour la même action, enlever un et mettre simplement changer de config
 		if (sf::Keyboard::isKeyPressed(inputs_config.charging_tp))
 			inputs.charging_tp = true;
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
@@ -145,11 +154,9 @@ Inputs get_inputs(sf::Window& window,InputsConfig inputs_config, i32 delta_time_
 	{
 		if (sf::Joystick::isConnected(0) and sf::Joystick::isButtonPressed(0, 1))
 			inputs.action3 = true;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+		if (sf::Keyboard::isKeyPressed(inputs_config.action3))
 			inputs.action3 = true;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
-			inputs.action4 = true;
-		// if (event.type == sf::Event::KeyPressed and event.key.code == sf::Keyboard::E)
+		// if (sf::Keyboard::isKeyPressed(sf::Keyboard::E))
 		// 	inputs.action4 = true;
 			
 	}
@@ -163,13 +170,13 @@ Inputs get_inputs(sf::Window& window,InputsConfig inputs_config, i32 delta_time_
 		direction1.x -= helper.keyboard.A.strength;
 		direction1.x += helper.keyboard.D.strength;
 #else		
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+		if (sf::Keyboard::isKeyPressed(inputs_config.up))
 			direction1.y -= 1;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+		if (sf::Keyboard::isKeyPressed(inputs_config.left))
 			direction1.y += 1;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+		if (sf::Keyboard::isKeyPressed(inputs_config.down))
 			direction1.x -= 1;
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+		if (sf::Keyboard::isKeyPressed(inputs_config.right))
 			direction1.x += 1;
 #endif		
 	}

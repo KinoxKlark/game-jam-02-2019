@@ -33,7 +33,10 @@ struct InputsConfig {
 		left,
 		right,
         charging_tp,
-        shooting;
+        shooting,
+        action3,
+        action4,
+        escape;
     // sf::Mouse::isButtonPressed
     // sf::Mouse::Button
     //     shooting;
