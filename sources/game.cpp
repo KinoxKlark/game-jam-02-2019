@@ -7,11 +7,13 @@
 
 void game_apply_physic(GameData& data, r32 world_delta_time);
 
-Weapon createWeapon(WeaponType type)
+Weapon createWeapon(WeaponType type, Entity* user)
 {
 	Weapon weapon;
 	// player_weapon.type = GT_pistol;
 	weapon.type = type;
+	weapon.user = user;
+
 	if(weapon.type == GT_swapper)
 	{
 		weapon.projectile_type = PT_swap_bullet;
@@ -30,6 +32,67 @@ Weapon createWeapon(WeaponType type)
 	return weapon;
 }
 
+Entity createEntity(EntityType type)
+{
+	Entity e;
+	e.type = type;
+	e.to_destroy = false;
+
+	if(e.type == ET_player)
+	{
+		e.type = ET_player;
+		e.pos.x = 3; // units
+		e.pos.y = 2; // units
+		e.max_speed = 10.f;    // units / sec
+		e.acceleration = 10.f; // units / sec^2
+		e.mass = 60.f; // 60kg
+		e.collision_radius = .45f; // units
+		e.tp_charge = 0;
+		e.tp_charging_speed = 3; // units / sec
+		e.tp_max_distance = 5;   // units
+		e.orientation.x = 0; // Unitlength vector
+		e.orientation.y = 1;
+
+		e.weapons = std::vector<Weapon>(6);
+		// e.weapons[0] = createWeapon(GT_pistol,data.player);
+		// e.weapons[1] = createWeapon(GT_swapper,data.player);
+		e.weapon = e.weapons[0];
+
+		e.asset_type = AssetType::PLAYER;
+		e.life_max = 20;
+		e.life = 20;
+		e.limit_the_speed = true;
+
+		e.is_rolling = false;
+		e.rolling_duration = 0.5;
+		e.time_spent_rolling = 0.f;
+		e.rolling_speed = 14.f;
+	}
+	else if(e.type == ET_alien)
+	{
+		e.max_speed = 5.f;
+		// e.acceleration = data.ground_friction*entity.max_speed;
+		e.mass = 60.f; // 60kg
+		e.collision_radius = .4f;
+		e.life_max = 5;
+		e.life = 5;
+		e.limit_the_speed = true;
+
+	}
+	else
+	{
+		e.max_speed = 5.f;
+		// e.acceleration = data.ground_friction*entity.max_speed;
+		e.mass = 60.f; // 60kg
+		e.collision_radius = .4f;
+		e.life_max = 5;
+		e.life = 5;
+		e.limit_the_speed = true;
+	}
+
+	return e;
+}
+
 // TODO(Sam): Nettoyer ca !
 void game_init(GameData& data)
 {
@@ -42,37 +105,11 @@ void game_init(GameData& data)
 	data.entities = std::vector<Entity>(500);
 	
 	// Player
+	data.entities[0] = createEntity(ET_player);
 	data.player = &(data.entities[0]);
-	data.player->type = ET_player;
-	data.player->to_destroy = false;
-	data.player->pos.x = 3; // units
-	data.player->pos.y = 2; // units
-	data.player->max_speed = 10.f;    // units / sec
-	data.player->acceleration = 10.f; // units / sec^2
-	data.player->mass = 60.f; // 60kg
-	data.player->collision_radius = .45f; // units
-	data.player->tp_charge = 0;
-	data.player->tp_charging_speed = 3; // units / sec
-	data.player->tp_max_distance = 5;   // units
-	data.player->orientation.x = 0; // Unitlength vector
-	data.player->orientation.y = 1;
-
-	data.player->weapons = std::vector<Weapon>(6);
-	data.player->weapons[0] = createWeapon(GT_pistol);
-	data.player->weapons[1] = createWeapon(GT_swapper);
-	data.player->weapons[0].user = data.player;
-	data.player->weapons[1].user = data.player;
+	data.player->weapons[0] = createWeapon(GT_pistol,data.player);
+	data.player->weapons[1] = createWeapon(GT_swapper,data.player);
 	data.player->weapon = data.player->weapons[0];
-
-	data.player->asset_type = AssetType::PLAYER;
-	data.player->life_max = 20;
-	data.player->life = 20;
-	data.player->limit_the_speed = true;
-
-    data.player->is_rolling = false;
-    data.player->rolling_duration = 0.5;
-    data.player->time_spent_rolling = 0.f;
-	data.player->rolling_speed = 14.f;
 
 	// Camera
 	data.camera.pos.x = data.player->pos.x;
@@ -226,20 +263,11 @@ void game_tick(GameData& data, Inputs& inputs)
 		r32 angle = (r32)(rand() % 360) / 360.f * PI2;
 		r32 distance = 10.f;
 		
-	    Entity entity;
-		entity.type = ET_alien;
+
+	    Entity entity(createEntity(ET_alien));
 		entity.pos.x = data.player->pos.x + distance * std::cos(angle);
 		entity.pos.y = data.player->pos.y + distance * std::sin(angle);
-		entity.max_speed = 5.f;
 		entity.acceleration = data.ground_friction*entity.max_speed;
-		entity.mass = 60.f; // 60kg
-		entity.collision_radius = .4f;
-		entity.life_max = 5;
-		entity.life = 5;
-		entity.limit_the_speed = true;
-
-		entity.to_destroy = false;
-
 		data.entities.push_back(entity);
 	}
 	// Ennemis

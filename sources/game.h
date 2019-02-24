@@ -56,7 +56,7 @@ struct Weapon {
     bool used;
 };
 
-Weapon createWeapon(WeaponType type);
+Weapon createWeapon(WeaponType type,Entity* user = nullptr);
 
 struct Entity {
     EntityType type;
@@ -130,5 +130,6 @@ struct GameData {
 
 void game_tick(GameData& data, Inputs& inputs);
 void game_init(GameData& data);
+Entity createEntity(EntityType type);
 
 #endif
