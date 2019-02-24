@@ -39,3 +39,7 @@ makefile_vars
 
 # Vscode
 .vscode/*
+
+# Tests
+tests/exe/*
+tests/files/*

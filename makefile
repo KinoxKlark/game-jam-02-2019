@@ -25,7 +25,12 @@ BUILD_DIR = ./build
 SOURCES_DIR = ./sources
 OBJECTS_DIR = ./objects
 
-all: game
+TESTS = ./tests
+TESTS_SRC = $(TESTS)/src
+TESTS_F = $(TESTS)/files
+TESTS_EXE = $(TESTS)/exe
+
+all: game test_write test_write2
 
 game: main.o game.o renderer.o inputs.o copy_dll build_dir
 	$(GCC) $(GCC_FLAGS) $(OBJECTS_DIR)/main.o \
@@ -72,7 +77,21 @@ ifeq ($(OS), win32)
 	del $(BUILD_DIR)\*.exe
 	del $(BUILD_DIR)\*.dll
 	del $(OBJECTS_DIR)\*.o
+	# del $(TESTS_F)/*
+	# del $(TESTS_EXE)/*
 else
-	rm $(BUILD_DIR)/*.exe
 	rm $(OBJECTS_DIR)/*.o
+	rm $(BUILD_DIR)/*.exe
+	rm $(TESTS_F)/*
+	rm $(TESTS_EXE)/*
 endif
+
+test_write: test_write.o
+	$(GCC) $(GCC_FLAGS) $(OBJECTS_DIR)/test_write.o -o $(TESTS_EXE)/test_write.exe $(GCC_LIBS)
+test_write.o: $(TESTS_SRC)/write.cc
+	$(GCC) $(GCC_FLAGS) -c $(TESTS_SRC)/write.cc -o $(OBJECTS_DIR)/test_write.o
+
+test_write2: test_write2.o
+	$(GCC) $(GCC_FLAGS) $(OBJECTS_DIR)/test_write2.o -o $(TESTS_EXE)/test_write2.exe $(GCC_LIBS)
+test_write2.o: $(TESTS_SRC)/write2.cc
+	$(GCC) $(GCC_FLAGS) -c $(TESTS_SRC)/write2.cc -o $(OBJECTS_DIR)/test_write2.o
