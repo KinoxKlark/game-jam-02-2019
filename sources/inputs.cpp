@@ -58,11 +58,9 @@ InputsHelper initHelper()
 	return helper;
 }
 
-Inputs get_inputs(sf::Window& window, i32 delta_time_ms)
-{
-	static InputsHelper helper = initHelper();
-	updateHelper(helper, delta_time_ms);
 
+Inputs default_inputs()
+{
 	Inputs inputs;
 	sf::Event event;
 
@@ -73,7 +71,21 @@ Inputs get_inputs(sf::Window& window, i32 delta_time_ms)
 	inputs.action3 = false;
 	inputs.action4 = false;
 
-	inputs.delta_time = delta_time_ms / 1000.f;
+	return inputs;
+}
+
+Inputs get_inputs(sf::Window& window, i32 delta_time_ms)
+{
+	static InputsHelper helper = initHelper();
+	updateHelper(helper, delta_time_ms);
+
+	// Create inputs
+	Inputs inputs(default_inputs());
+	inputs.delta_time = delta_time_ms / 1000.f;// delta_time in seconds
+
+	// Create event
+	sf::Event event;
+
 
 	// Fenetre
 	while(window.pollEvent(event))

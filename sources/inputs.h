@@ -5,8 +5,8 @@
 #include <SFML/Window.hpp>
 
 struct Inputs {
-    vector direction1,
-		direction2;
+    vector  direction1,
+		    direction2;
     r32 delta_time;
 	
 	bool quit_game;
@@ -20,6 +20,8 @@ struct Inputs {
 	sf::Vector2i mouse_pos_tmp;
 	sf::Vector2u winsize_tmp;
 };
+
+Inputs default_inputs();
 
 Inputs get_inputs(sf::Window& window, i32 delta_time_ms);
 
