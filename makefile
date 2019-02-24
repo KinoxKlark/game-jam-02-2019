@@ -30,7 +30,7 @@ TESTS_SRC = $(TESTS)/src
 TESTS_F = $(TESTS)/files
 TESTS_EXE = $(TESTS)/exe
 
-all: game test_write test_write2
+all: game
 
 game: main.o game.o renderer.o inputs.o copy_dll build_dir
 	$(GCC) $(GCC_FLAGS) $(OBJECTS_DIR)/main.o \

@@ -2,6 +2,8 @@
 #include <iostream>
 #include <string>
 
+//crache une erreur, je ne sais pas pourquoi
+
 struct Test {
     int a;
     std::string b;
@@ -19,10 +21,10 @@ int main()
     // Reading from it
     std::ifstream input_file("../files/file.data", std::ios::binary);
     Test c;
-    input_file.read((char*)&c, sizeof(Test));
-    // input_file.close();
-    // std::cout << c.a << std::endl;
-    // std::cout << c.b << std::endl;
+    input_file.read((char*)&c, sizeof(Test)); // Erreur à cause de cette ligne
+    input_file.close();
+    std::cout << c.a << std::endl;
+    std::cout << c.b << std::endl;
 
     return 0;
 }

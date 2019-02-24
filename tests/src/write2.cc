@@ -5,6 +5,7 @@
 
 using namespace std;
 
+// Code trouver ici: https://stackoverflow.com/questions/5506645/how-to-read-write-a-struct-in-binary-files, ne crache pas d'erreur mais est critiqué vivement
 
 typedef struct student
 {
