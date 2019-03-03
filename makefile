@@ -13,7 +13,7 @@ GCC_LIBS += -lsfml-graphics
 GCC_LIBS += -lsfml-window 
 GCC_LIBS += -lsfml-system 
 #GCC_LIBS += -lsfml-audio 
-#GCC_LIBS += -lsfml-network
+GCC_LIBS += -lsfml-network
 
 ifeq ($(OS),win32)
 GCC_FLAGS += -DWIN32
@@ -86,6 +86,8 @@ else
 	rm $(TESTS_EXE)/*
 endif
 
+# Various tests
+
 test_write: test_write.o
 	$(GCC) $(GCC_FLAGS) $(OBJECTS_DIR)/test_write.o -o $(TESTS_EXE)/test_write.exe $(GCC_LIBS)
 test_write.o: $(TESTS_SRC)/write.cc
@@ -95,3 +97,13 @@ test_write2: test_write2.o
 	$(GCC) $(GCC_FLAGS) $(OBJECTS_DIR)/test_write2.o -o $(TESTS_EXE)/test_write2.exe $(GCC_LIBS)
 test_write2.o: $(TESTS_SRC)/write2.cc
 	$(GCC) $(GCC_FLAGS) -c $(TESTS_SRC)/write2.cc -o $(OBJECTS_DIR)/test_write2.o
+
+tcp: tcp.o
+	$(GCC) $(GCC_FLAGS) $(OBJECTS_DIR)/tcp.o -o $(TESTS_EXE)/tcp.exe $(GCC_LIBS)
+tcp.o: $(TESTS_SRC)/tcp.cc
+	$(GCC) $(GCC_FLAGS) -c $(TESTS_SRC)/tcp.cc -o $(OBJECTS_DIR)/tcp.o
+
+tcp1: tcp1.o
+	$(GCC) $(GCC_FLAGS) $(OBJECTS_DIR)/tcp1.o -o $(TESTS_EXE)/tcp1.exe $(GCC_LIBS)
+tcp1.o: $(TESTS_SRC)/tcp1.cc
+	$(GCC) $(GCC_FLAGS) -c $(TESTS_SRC)/tcp1.cc -o $(OBJECTS_DIR)/tcp1.o
