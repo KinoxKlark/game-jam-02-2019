@@ -309,7 +309,7 @@ void game_tick(GameData& data, Inputs& inputs)
 	for(auto& entity : data.entities)
 	{
 		// TODO(Sam): Gerer les types d'entites
-		if(&entity == data.player) continue;// if(entity.type == ET_PLAYER) // if(entity.type <= ET_PLAYER) -> types before ET_PLAYER could be various blocks
+		if(entity.type <= ET_player) continue;// if(entity.type == ET_PLAYER) // if(entity.type <= ET_PLAYER) -> types before ET_PLAYER could be various blocks
 
 		vector direction = vector(data.player->pos - entity.pos);
 
@@ -326,7 +326,7 @@ void game_tick(GameData& data, Inputs& inputs)
 	// for(auto& entity : data.entities)
 	// {
 	// 	// TODO(Sam): Gerer les types d'entites
-	// 	if(&entity == data.player)
+	// 	if(entity.type <= ET_player)
 	// 	{
 	// 		update_entity_states(data.player, inputs, world_delta_time);
 	// 		action_entity(data, data.player, inputs);
