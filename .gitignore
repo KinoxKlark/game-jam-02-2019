@@ -43,3 +43,4 @@ makefile_vars
 # Tests
 tests/exe/*
 tests/files/*
+tests_david/*
