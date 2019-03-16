@@ -187,8 +187,6 @@ void game_tick(GameData& data, Inputs& inputs)
 		data.entities.push_back(entity);
 	}
 
-	update_entity_states(data.player, inputs, world_delta_time);
-	action_entity(data, data.player, inputs);
 	// //Actions du joueur
 	// {
 	// 	// NB: Avoir un effet de ralentit n'est pas envisageable en multi joueur (?)
@@ -307,18 +305,38 @@ void game_tick(GameData& data, Inputs& inputs)
 	// 	}
 	// }
 
+	// // Ennemis IA
+	// for(auto& entity : data.entities)
+	// {
+	// 	// TODO(Sam): Gerer les types d'entites
+	// 	if(&entity == data.player) continue;// if(entity.type == ET_PLAYER) // if(entity.type <= ET_PLAYER) -> types before ET_PLAYER could be various blocks
+
+	// 	vector direction = vector(data.player->pos - entity.pos);
+
+	// 	entity.acc = (
+	// 		direction * entity.acceleration -
+	// 		entity.speed * data.ground_friction)/entity.mass;
+
+	// }	
+
+
+
+
 	// Ennemis IA
 	for(auto& entity : data.entities)
 	{
 		// TODO(Sam): Gerer les types d'entites
-		if(&entity == data.player) continue;
-
-		vector direction = vector(data.player->pos - entity.pos);
-
-		entity.acc = (
-			direction * entity.acceleration -
-			entity.speed * data.ground_friction)/entity.mass;
-
+		if(&entity == data.player)
+		{
+			update_entity_states(data.player, inputs, world_delta_time);
+			action_entity(data, data.player, inputs);
+		}
+		else
+		{
+			Inputs inputs = ennemie_IA(data,entity);
+			update_entity_states(&entity, inputs, world_delta_time);
+			action_entity(data, &entity, inputs);
+		}
 	}
 
 
@@ -472,6 +490,13 @@ void game_apply_physic(GameData& data, r32 world_delta_time)
 	game_apply_physic_projectiles(data,world_delta_time);
 }
 
+Inputs ennemie_IA(GameData& data, Entity& e)
+{
+	Inputs inputs = default_inputs();
+	inputs.direction1 = vector(data.player->pos - e.pos);
+
+	return inputs;
+}
 
 void update_entity_states(Entity* e, Inputs const& inputs, r32 world_delta_time)
 {
@@ -485,8 +510,10 @@ void update_entity_states(Entity* e, Inputs const& inputs, r32 world_delta_time)
 
 	// Rolling
 	if(inputs.action3)
+	{
 		e->is_rolling = true;
 		e->time_spent_rolling += world_delta_time;
+	}
 
 	if(e->time_spent_rolling > e->rolling_duration)
 	{
