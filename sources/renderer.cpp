@@ -4,6 +4,10 @@
 #include <iostream>
 #include <cstdio>
 
+
+TexturesContainer game_textures = loadTextures();
+SpritesContainer game_sprites = loadSprites(game_textures);
+
 // TODO(Sam): Est ce qu'on met �a dans un assets.cpp ?
 bool load_assets(Assets& assets)
 {
@@ -169,16 +173,6 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 		window.draw(tp_target);
 	}
 
-	// Temporary: Charging sprite and texture here
-	sf::Texture basic_pistol_texture;
-	if (!basic_pistol_texture.loadFromFile("ressources/basic_pistol.png"))//Attention, n'est valable que si le programme est lancé depuis la racine!
-	{
-		// erreur...
-	}
-	sf::Sprite basic_pistol_sprite;
-	basic_pistol_sprite.setTexture(basic_pistol_texture);
-	basic_pistol_sprite.setScale(sf::Vector2f(0.05f, 0.05f));
-
 	//TODO(Dav)
 	//This camera let draw static elements, use another view instead?
 	sf::Vector2f topLeftOfWindow = window.mapPixelToCoords(sf::Vector2i(0, 0));
@@ -202,8 +196,8 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 		window.draw(box);
 
 		if(data.player->weapons[i].type == GT_pistol)
-			basic_pistol_sprite.setPosition(i*(width+ thickness)+topLeftOfWindow.x + 4, 8.3 + topLeftOfWindow.y);
-			window.draw(basic_pistol_sprite);
+			game_sprites.basic_pistol_sprite.setPosition(i*(width+ thickness)+topLeftOfWindow.x + 4, 8.3 + topLeftOfWindow.y);
+			window.draw(game_sprites.basic_pistol_sprite);
 	}
 
 	window.draw(text);
@@ -211,4 +205,27 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 	window.display();
 	
 	return;
+}
+
+
+TexturesContainer loadTextures()
+{
+	TexturesContainer textures;
+
+	textures.basic_pistol_texture.loadFromFile("ressources/basic_pistol.png");//Attention,Path n'est valable que si le programme est lancé depuis la racine!
+	// if (!basic_pistol_texture.loadFromFile("ressources/basic_pistol.png"))
+	// {
+	// 	// erreur...
+	// }
+
+	return textures;
+}
+SpritesContainer loadSprites(TexturesContainer& textures)
+{
+	SpritesContainer sprites;
+	
+	sprites.basic_pistol_sprite.setTexture(textures.basic_pistol_texture);
+	sprites.basic_pistol_sprite.setScale(sf::Vector2f(0.05f, 0.05f));
+
+	return sprites;
 }
