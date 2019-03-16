@@ -169,11 +169,22 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 		window.draw(tp_target);
 	}
 
+	// Temporary: Charging sprite and texture here
+	sf::Texture basic_pistol_texture;
+	if (!basic_pistol_texture.loadFromFile("ressources/basic_pistol.png"))//Attention, n'est valable que si le programme est lancé depuis la racine!
+	{
+		// erreur...
+	}
+	sf::Sprite basic_pistol_sprite;
+	basic_pistol_sprite.setTexture(basic_pistol_texture);
+	basic_pistol_sprite.setScale(sf::Vector2f(0.05f, 0.05f));
+
 	//TODO(Dav)
 	//This camera let draw static elements, use another view instead?
 	sf::Vector2f topLeftOfWindow = window.mapPixelToCoords(sf::Vector2i(0, 0));
 	for(size_t i(0); i < data.player->weapons.size(); i++)
 	{
+		// Weapons/Tools' bar
 		r32 width(1);
 		r32 thickness(0.1);
 
@@ -189,6 +200,10 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 
 		box.setPosition(i*(width+ thickness)+topLeftOfWindow.x + 4, 8 + topLeftOfWindow.y);
 		window.draw(box);
+
+		if(data.player->weapons[i].type == GT_pistol)
+			basic_pistol_sprite.setPosition(i*(width+ thickness)+topLeftOfWindow.x + 4, 8.3 + topLeftOfWindow.y);
+			window.draw(basic_pistol_sprite);
 	}
 
 	window.draw(text);

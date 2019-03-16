@@ -334,6 +334,7 @@ void game_tick(GameData& data, Inputs& inputs)
 		else
 		{
 			Inputs inputs = ennemie_IA(data,entity);
+			std::cout << inputs.direction1.x << "   " << inputs.direction1.y << std::endl;
 			update_entity_states(&entity, inputs, world_delta_time);
 			action_entity(data, &entity, inputs);
 		}

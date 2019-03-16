@@ -84,7 +84,7 @@ InputsConfig get_inputs_config(){
 Inputs default_inputs()
 {
 	Inputs inputs;
-	sf::Event event;
+	// sf::Event event;
 
 	inputs.direction1 = vector(0,0);
 	inputs.quit_game = false;
