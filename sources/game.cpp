@@ -187,158 +187,158 @@ void game_tick(GameData& data, Inputs& inputs)
 		data.entities.push_back(entity);
 	}
 
-	// //Actions du joueur
-	// {
-	// 	// NB: Avoir un effet de ralentit n'est pas envisageable en multi joueur (?)
-	// 	if(inputs.charging_tp == true)
-	// 	{
-	// 		data.time_factor = 0.2f;
-	// 	}
-	// 	else
-	// 	{
-	// 		data.time_factor = 1.f;
-	// 	}
+	//Actions du joueur
+	{
+		// NB: Avoir un effet de ralentit n'est pas envisageable en multi joueur (?)
+		if(inputs.charging_tp == true)
+		{
+			data.time_factor = 0.2f;
+		}
+		else
+		{
+			data.time_factor = 1.f;
+		}
 
-	// 	//TODO(Dav): Changement d'arme, utiliser une référence sur le tableau plutot
-	// 	if(inputs.action4)
-	// 	{
-	// 		data.player->weapon_id += 1;
-	// 		if(data.player->weapon_id >= data.player->weapons.size() or data.player->weapon_id < 0)
-	// 			data.player->weapon_id = 0;
-	// 		data.player->weapon = data.player->weapons[data.player->weapon_id];
-	// 	}
+		//TODO(Dav): Changement d'arme, utiliser une référence sur le tableau plutot
+		if(inputs.action4)
+		{
+			data.player->weapon_id += 1;
+			if(data.player->weapon_id >= data.player->weapons.size() or data.player->weapon_id < 0)
+				data.player->weapon_id = 0;
+			data.player->weapon = data.player->weapons[data.player->weapon_id];
+		}
 		
-	// 	//teleportation
-	// 	if(inputs.charging_tp == true)
-	// 	{
-	// 		data.player->tp_charge += inputs.delta_time * data.player->tp_charging_speed;
-	// 		if(data.player->tp_charge > data.player->tp_max_distance)
-	// 			data.player->tp_charge = data.player->tp_max_distance;
-	// 	}
-	// 	else if(data.player->tp_charge)
-	// 	{
-	// 		data.player->pos += data.player->tp_charge * inputs.direction1;
-	// 		data.player->tp_charge = 0;
-	// 	}
+		//teleportation
+		if(inputs.charging_tp == true)
+		{
+			data.player->tp_charge += inputs.delta_time * data.player->tp_charging_speed;
+			if(data.player->tp_charge > data.player->tp_max_distance)
+				data.player->tp_charge = data.player->tp_max_distance;
+		}
+		else if(data.player->tp_charge)
+		{
+			data.player->pos += data.player->tp_charge * inputs.direction1;
+			data.player->tp_charge = 0;
+		}
 		
-	// 	//moving
-	// 	{
-	// 		if(inputs.action3)
-	// 			data.player->is_rolling = true;
+		//moving
+		{
+			if(inputs.action3)
+				data.player->is_rolling = true;
 
-	// 		if(data.player->time_spent_rolling > data.player->rolling_duration)
-	// 		{
-	// 			data.player->time_spent_rolling = 0;
-	// 			data.player->is_rolling = false;
-	// 		}
+			if(data.player->time_spent_rolling > data.player->rolling_duration)
+			{
+				data.player->time_spent_rolling = 0;
+				data.player->is_rolling = false;
+			}
 
-	// 		if(data.player->is_rolling)
-	// 		{
-	// 			data.player->time_spent_rolling += world_delta_time;
-	// 			// vector deviation = inputs.direction1 * data.player->rolling_speed * 0.5f;
+			if(data.player->is_rolling)
+			{
+				data.player->time_spent_rolling += world_delta_time;
+				// vector deviation = inputs.direction1 * data.player->rolling_speed * 0.5f;
 
-	// 			// TODO(Sam): Recuperation de la vitesse initiale
-	// 			data.player->speed = data.player->rolling_speed * safe_normalise(data.player->speed);
-	// 			data.player->acc = {0,0};
-	// 			data.player->limit_the_speed = false;
-	// 		}
-	// 		else
-	// 		{
-	// 			// TODO(Sam): On a une repetition du code avec les ennemis, on garde ?
-	// 			data.player->acc = (
-	// 				inputs.direction1 * data.player->acceleration -
-	// 				data.player->speed * data.ground_friction)/data.player->mass;
+				// TODO(Sam): Recuperation de la vitesse initiale
+				data.player->speed = data.player->rolling_speed * safe_normalise(data.player->speed);
+				data.player->acc = {0,0};
+				data.player->limit_the_speed = false;
+			}
+			else
+			{
+				// TODO(Sam): On a une repetition du code avec les ennemis, on garde ?
+				data.player->acc = (
+					inputs.direction1 * data.player->acceleration -
+					data.player->speed * data.ground_friction)/data.player->mass;
 
-	// 			data.player->limit_the_speed = true;
-	// 		}
+				data.player->limit_the_speed = true;
+			}
 
-	// 	}
+		}
 		
-	// 	//shooting
-	// 	r32 direction2_length(norm(inputs.direction2));
-	// 	if(direction2_length > 0.1) // TODO(Sam): Quelle sensibilite ?
-	// 		data.player->orientation = inputs.direction2 / direction2_length;
+		//shooting
+		r32 direction2_length(norm(inputs.direction2));
+		if(direction2_length > 0.1) // TODO(Sam): Quelle sensibilite ?
+			data.player->orientation = inputs.direction2 / direction2_length;
 
-	// 	if(data.player->weapon.used)
-	// 		data.player->weapon.waited_time += world_delta_time;
+		if(data.player->weapon.used)
+			data.player->weapon.waited_time += world_delta_time;
 
-	// 	if(data.player->weapon.waited_time > data.player->weapon.cooldown)
-	// 	{
-	// 		data.player->weapon.waited_time = 0;
-	// 		data.player->weapon.used = false;
-	// 	}
+		if(data.player->weapon.waited_time > data.player->weapon.cooldown)
+		{
+			data.player->weapon.waited_time = 0;
+			data.player->weapon.used = false;
+		}
 
-	// 	if(inputs.shooting and !data.player->weapon.used and !data.player->is_rolling)
-	// 	{
-	// 			data.player->weapon.used = true;
-	// 			// TODO(Sam): Est ce qu'on fera pas une fonction pour cr�er ces entit�s ? Ràp Dav: oui c'est ce que je voulais faire au début, faire des switch
-	// 			if(data.player->weapon.type == GT_swapper)
-	// 			{
-	// 				Projectile p;
-	// 				p.type = PT_swap_bullet;
-	// 				p.life_time = 4;
-	// 				p.speed = 10;
-	// 				p.dommage = 0;
-	// 				p.pos = data.player->pos;
-	// 				p.direction = data.player->orientation;
-	// 				p.asset_type = AssetType::PROJECTILE;
-	// 				p.to_destroy = false;
-	// 				p.user = data.player;
+		if(inputs.shooting and !data.player->weapon.used and !data.player->is_rolling)
+		{
+				data.player->weapon.used = true;
+				// TODO(Sam): Est ce qu'on fera pas une fonction pour cr�er ces entit�s ? Ràp Dav: oui c'est ce que je voulais faire au début, faire des switch
+				if(data.player->weapon.type == GT_swapper)
+				{
+					Projectile p;
+					p.type = PT_swap_bullet;
+					p.life_time = 4;
+					p.speed = 10;
+					p.dommage = 0;
+					p.pos = data.player->pos;
+					p.direction = data.player->orientation;
+					p.asset_type = AssetType::PROJECTILE;
+					p.to_destroy = false;
+					p.user = data.player;
 
-	// 				data.projectiles.push_back(p);
-	// 			}
-	// 			else if(data.player->weapon.type == GT_pistol)
-	// 			{
-	// 				Projectile p;
-	// 				p.type = PT_pistol_bullet;
-	// 				p.life_time = 4;
-	// 				p.speed = 10;
-	// 				p.dommage = 1;
-	// 				p.pos = data.player->pos;
-	// 				p.direction = data.player->orientation;
-	// 				p.asset_type = AssetType::PROJECTILE;
-	// 				p.to_destroy = false;
-	// 				p.user = data.player;
+					data.projectiles.push_back(p);
+				}
+				else if(data.player->weapon.type == GT_pistol)
+				{
+					Projectile p;
+					p.type = PT_pistol_bullet;
+					p.life_time = 4;
+					p.speed = 10;
+					p.dommage = 1;
+					p.pos = data.player->pos;
+					p.direction = data.player->orientation;
+					p.asset_type = AssetType::PROJECTILE;
+					p.to_destroy = false;
+					p.user = data.player;
 
-	// 				data.projectiles.push_back(p);
-	// 			}
-	// 	}
-	// }
-
-	// // Ennemis IA
-	// for(auto& entity : data.entities)
-	// {
-	// 	// TODO(Sam): Gerer les types d'entites
-	// 	if(&entity == data.player) continue;// if(entity.type == ET_PLAYER) // if(entity.type <= ET_PLAYER) -> types before ET_PLAYER could be various blocks
-
-	// 	vector direction = vector(data.player->pos - entity.pos);
-
-	// 	entity.acc = (
-	// 		direction * entity.acceleration -
-	// 		entity.speed * data.ground_friction)/entity.mass;
-
-	// }	
-
-
-
+					data.projectiles.push_back(p);
+				}
+		}
+	}
 
 	// Ennemis IA
 	for(auto& entity : data.entities)
 	{
 		// TODO(Sam): Gerer les types d'entites
-		if(&entity == data.player)
-		{
-			update_entity_states(data.player, inputs, world_delta_time);
-			action_entity(data, data.player, inputs);
-		}
-		else
-		{
-			Inputs inputs = ennemie_IA(data,entity);
-			std::cout << inputs.direction1.x << "   " << inputs.direction1.y << std::endl;
-			update_entity_states(&entity, inputs, world_delta_time);
-			action_entity(data, &entity, inputs);
-		}
-	}
+		if(&entity == data.player) continue;// if(entity.type == ET_PLAYER) // if(entity.type <= ET_PLAYER) -> types before ET_PLAYER could be various blocks
+
+		vector direction = vector(data.player->pos - entity.pos);
+
+		entity.acc = (
+			direction * entity.acceleration -
+			entity.speed * data.ground_friction)/entity.mass;
+
+	}	
+
+
+
+
+	// Ennemis IA
+	// for(auto& entity : data.entities)
+	// {
+	// 	// TODO(Sam): Gerer les types d'entites
+	// 	if(&entity == data.player)
+	// 	{
+	// 		update_entity_states(data.player, inputs, world_delta_time);
+	// 		action_entity(data, data.player, inputs);
+	// 	}
+	// 	else
+	// 	{
+	// 		Inputs inputs = ennemie_IA(data,entity);
+	// 		std::cout << inputs.direction1.x << "   " << inputs.direction1.y << std::endl;
+	// 		update_entity_states(&entity, inputs, world_delta_time);
+	// 		action_entity(data, &entity, inputs);
+	// 	}
+	// }
 
 
 	// Physique
