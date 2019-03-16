@@ -12,12 +12,14 @@
 struct TexturesContainer
 {
    sf::Texture basic_pistol_texture;
+   sf::Texture tp_target_texture;
 };
 typedef struct TexturesContainer TexturesContainer;
 
 struct SpritesContainer
 {
     sf::Sprite basic_pistol_sprite;
+    sf::Sprite tp_target_sprite;
 };
 typedef struct SpritesContainer SpritesContainer;
 

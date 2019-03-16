@@ -164,13 +164,16 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 
 	if(data.player->tp_charge > 0)
 	{
-		sf::CircleShape tp_target(.20);
-		tp_target.setOrigin(.20,.20);
-		tp_target.setFillColor(sf::Color::Green);
-		tp_target.setPosition(data.player->pos.x + (data.player->tp_charge * inputs.direction1.x),
-		data.player->pos.y + data.player->tp_charge * inputs.direction1.y);
+		// sf::CircleShape tp_target(.20);
+		// tp_target.setOrigin(.20,.20);
+		// tp_target.setFillColor(sf::Color::Green);
+		// tp_target.setPosition(data.player->pos.x + (data.player->tp_charge * inputs.direction1.x),
+		// 	data.player->pos.y + data.player->tp_charge * inputs.direction1.y);
+		// window.draw(tp_target);
 
-		window.draw(tp_target);
+		game_sprites.tp_target_sprite.setPosition(data.player->pos.x + (data.player->tp_charge * inputs.direction1.x),
+			data.player->pos.y + data.player->tp_charge * inputs.direction1.y);
+		window.draw(game_sprites.tp_target_sprite);
 	}
 
 	//TODO(Dav)
@@ -217,6 +220,7 @@ TexturesContainer loadTextures()
 	// {
 	// 	// erreur...
 	// }
+	textures.tp_target_texture.loadFromFile("ressources/tp_target2.png");
 
 	return textures;
 }
@@ -226,6 +230,10 @@ SpritesContainer loadSprites(TexturesContainer& textures)
 	
 	sprites.basic_pistol_sprite.setTexture(textures.basic_pistol_texture);
 	sprites.basic_pistol_sprite.setScale(sf::Vector2f(0.05f, 0.05f));
+
+	sprites.tp_target_sprite.setTexture(textures.tp_target_texture);
+	sprites.tp_target_sprite.setScale(sf::Vector2f(0.03f, 0.03f));
+	sprites.tp_target_sprite.setOrigin(sprites.tp_target_sprite.getTextureRect().width * 0.5,sprites.tp_target_sprite.getTextureRect().height * 0.5);
 
 	return sprites;
 }
