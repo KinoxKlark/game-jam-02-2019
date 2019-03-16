@@ -46,8 +46,8 @@ Entity createEntity(EntityType type)
 		e.mass = 60.f; // 60kg
 		e.collision_radius = .45f; // units
 		e.tp_charge = 0;
-		e.tp_charging_speed = 3; // units / sec
-		e.tp_max_distance = 5;   // units
+		e.tp_charging_speed = 10; // units / sec
+		e.tp_max_distance = 8;   // units
 		e.orientation.x = 0; // Unitlength vector
 		e.orientation.y = 1;
 
