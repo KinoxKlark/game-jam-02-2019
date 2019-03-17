@@ -55,6 +55,7 @@ Entity createEntity(EntityType type)
 		// e.weapons[0] = createWeapon(GT_pistol,data.player);
 		// e.weapons[1] = createWeapon(GT_swapper,data.player);
 		e.weapon = e.weapons[0];
+		e.weapon_id = 0;
 
 		e.asset_type = AssetType::PLAYER;
 		e.life_max = 20;

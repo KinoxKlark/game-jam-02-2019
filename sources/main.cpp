@@ -15,6 +15,11 @@ int main()
 	// TODO(Sam): On va un jour vouloir commencer a parler serieusement
 	// de memoire, tout foutre dans le stack ne va pas etre suffisant
 	// encore longtemps ...
+
+	//Loading Textures and sprites
+	TexturesContainer game_textures = loadTextures();
+	SpritesContainer game_sprites = loadSprites(game_textures);
+
 	GameData data;
 	game_init(data);
 	if(!load_assets(data.assets))
@@ -47,7 +52,7 @@ int main()
 			game_tick(data, inputs);
 
 			// Game Render
-			render(data,window,inputs);
+			render(data, window, game_sprites, inputs);
 			// TODO(Sam): Faut enlever les input d'ici, je l'ai mis seulement pour qu'on
 			// puisse afficher dans le debug. Faudra a terme trouver une meilleur solution
 

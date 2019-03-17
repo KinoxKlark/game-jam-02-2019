@@ -5,9 +5,6 @@
 #include <cstdio>
 
 
-TexturesContainer game_textures = loadTextures();
-SpritesContainer game_sprites = loadSprites(game_textures);
-
 // TODO(Sam): Est ce qu'on met �a dans un assets.cpp ?
 bool load_assets(Assets& assets)
 {
@@ -16,7 +13,7 @@ bool load_assets(Assets& assets)
 	return true;
 }
 
-void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs)
+void render(GameData const& data, sf::RenderWindow& window, SpritesContainer& game_sprites, Inputs const& inputs)
 {
 
 	// Camera
@@ -179,28 +176,37 @@ void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs
 	//TODO(Dav)
 	//This camera let draw static elements, use another view instead?
 	sf::Vector2f topLeftOfWindow = window.mapPixelToCoords(sf::Vector2i(0, 0));
+
+	// Weapons/Tools' bar
 	for(size_t i(0); i < data.player->weapons.size(); i++)
 	{
-		// Weapons/Tools' bar
+		// One boxe
 		r32 width(1);
 		r32 thickness(0.1);
-
 		sf::RectangleShape box(sf::Vector2f(width,width));
+		box.setOutlineThickness(0.1);
+		box.setOutlineColor(sf::Color::Black);
 
+		// Fill it if selected, else transparent
 		if(data.player->weapon_id == i)
 			box.setFillColor(sf::Color::Yellow);
 		else
 			box.setFillColor(sf::Color::Transparent);
 
-		box.setOutlineThickness(0.1);
-		box.setOutlineColor(sf::Color::Black);
 
 		box.setPosition(i*(width+ thickness)+topLeftOfWindow.x + 4, 8 + topLeftOfWindow.y);
 		window.draw(box);
 
 		if(data.player->weapons[i].type == GT_pistol)
-			game_sprites.basic_pistol_sprite.setPosition(i*(width+ thickness)+topLeftOfWindow.x + 4, 8.3 + topLeftOfWindow.y);
+		{
+			game_sprites.basic_pistol_sprite.setPosition(i*(width+ thickness)+topLeftOfWindow.x + 4 + width/2, 8 + topLeftOfWindow.y + width/2);
 			window.draw(game_sprites.basic_pistol_sprite);
+		}
+		else if(data.player->weapons[i].type == GT_swapper)
+		{
+			game_sprites.swapper_pistol_sprite.setPosition(i*(width+ thickness)+topLeftOfWindow.x + 4 + width/2, 8 + topLeftOfWindow.y + width/2);
+			window.draw(game_sprites.swapper_pistol_sprite);
+		}
 	}
 
 	window.draw(text);
@@ -220,6 +226,9 @@ TexturesContainer loadTextures()
 	// {
 	// 	// erreur...
 	// }
+
+
+	textures.swapper_pistol_texture.loadFromFile("ressources/swapper_pistol.png");
 	textures.tp_target_texture.loadFromFile("ressources/tp_target2.png");
 
 	return textures;
@@ -228,9 +237,18 @@ SpritesContainer loadSprites(TexturesContainer& textures)
 {
 	SpritesContainer sprites;
 	
+	//basic_pistol
 	sprites.basic_pistol_sprite.setTexture(textures.basic_pistol_texture);
 	sprites.basic_pistol_sprite.setScale(sf::Vector2f(0.05f, 0.05f));
+	sprites.basic_pistol_sprite.setOrigin(sprites.basic_pistol_sprite.getTextureRect().width * 0.5,sprites.basic_pistol_sprite.getTextureRect().height * 0.5);
 
+	//Swapper_pistol
+
+    sprites.swapper_pistol_sprite.setTexture(textures.swapper_pistol_texture);
+	sprites.swapper_pistol_sprite.setScale(sf::Vector2f(0.04f, 0.04f));
+	sprites.swapper_pistol_sprite.setOrigin(sprites.swapper_pistol_sprite.getTextureRect().width * 0.5,sprites.swapper_pistol_sprite.getTextureRect().height * 0.5);
+
+	//tp_target
 	sprites.tp_target_sprite.setTexture(textures.tp_target_texture);
 	sprites.tp_target_sprite.setScale(sf::Vector2f(0.03f, 0.03f));
 	sprites.tp_target_sprite.setOrigin(sprites.tp_target_sprite.getTextureRect().width * 0.5,sprites.tp_target_sprite.getTextureRect().height * 0.5);

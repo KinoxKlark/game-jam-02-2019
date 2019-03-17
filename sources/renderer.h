@@ -12,6 +12,7 @@
 struct TexturesContainer
 {
    sf::Texture basic_pistol_texture;
+   sf::Texture swapper_pistol_texture;
    sf::Texture tp_target_texture;
 };
 typedef struct TexturesContainer TexturesContainer;
@@ -19,6 +20,7 @@ typedef struct TexturesContainer TexturesContainer;
 struct SpritesContainer
 {
     sf::Sprite basic_pistol_sprite;
+    sf::Sprite swapper_pistol_sprite;
     sf::Sprite tp_target_sprite;
 };
 typedef struct SpritesContainer SpritesContainer;
@@ -26,6 +28,6 @@ typedef struct SpritesContainer SpritesContainer;
 TexturesContainer loadTextures();
 SpritesContainer loadSprites(TexturesContainer& textures);
 
-void render(GameData const& data, sf::RenderWindow& window, Inputs const& inputs);
+void render(GameData const& data, sf::RenderWindow& window, SpritesContainer& game_sprites, Inputs const& inputs);
 
 #endif
