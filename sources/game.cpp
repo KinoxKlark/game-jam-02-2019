@@ -164,6 +164,19 @@ void clean_up(GameData& data)
 
 void game_tick(GameData& data, Inputs& inputs)
 {
+	if(data.mode == MODE_GAME)
+	{
+		game_tick_game(data, inputs);
+	}
+	else if(data.mode == MODE_EDITOR)
+	{
+		game_tick_editor(data, inputs);
+	}
+	
+}
+
+void game_tick_game(GameData& data, Inputs& inputs)
+{
 	
 	r32 world_delta_time = data.time_factor*inputs.delta_time;
 	
@@ -174,7 +187,7 @@ void game_tick(GameData& data, Inputs& inputs)
 	// secondaire est en cours alors ralentir le temps
 
 	// Spawn des ennemis
-	// TODO(Sam): Gerer diffrement le cap max des entites
+	// TODO(Sam): Gerer differement le cap max des entites
 	while(data.entities.size() < 4)
 	{
 		r32 angle = (r32)(rand() % 360) / 360.f * PI2;
@@ -385,6 +398,12 @@ void game_tick(GameData& data, Inputs& inputs)
 
 	// Destruction des divers entites et projectiles
 	clean_up(data);
+
+	return;
+}
+
+void game_tick_editor(GameData& data, Inputs& inputs)
+{
 
 	return;
 }

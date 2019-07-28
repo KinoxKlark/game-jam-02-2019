@@ -9,20 +9,28 @@
 
 struct Entity;
 
+enum GameMode {
+    MODE_GAME,
+    MODE_EDITOR
+};
+
 enum EntityType {
-    ET_None, //Valeure par défaut
+    ET_None, //Valeur par défaut
+    // Entitee "intelligentes"
     ET_player,
     ET_alien,
+    // Entitee objet
+    ET_wall,
 };
 
 enum WeaponType {
-    GT_None, //Quand pas d'arme, valeure par défaut
+    GT_None, //Quand pas d'arme, valeur par défaut
     GT_pistol,
     GT_swapper,
 };
 
 enum ProjectileType {
-    PT_None, //Quand pas de projectile, valeure par défaut
+    PT_None, //Quand pas de projectile, valeur par défaut
     PT_pistol_bullet,
     PT_swap_bullet,
 };
@@ -115,6 +123,7 @@ struct DebugInfos {
 };
 
 struct GameData {
+    GameMode mode;
 	Entity* player;
     InputsConfig player_inputs_config;
 	std::vector<Entity> entities;
@@ -130,6 +139,10 @@ struct GameData {
 };
 
 void game_tick(GameData& data, Inputs& inputs);
+void game_tick_game(GameData& data, Inputs& inputs);
+void game_tick_editor(GameData& data, Inputs& inputs);
+
+
 void game_init(GameData& data);
 Entity createEntity(EntityType type);
 

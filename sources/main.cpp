@@ -6,7 +6,7 @@
 #include "renderer.h"
 #include "assets.h"
 
-int main()
+int main(int argc, char* argv[])
 {
 	const u32 GAME_WIDTH(800), GAME_HEIGHT(600);
 	const u32 FRAME_PER_SECONDS(60);
@@ -21,6 +21,7 @@ int main()
 	SpritesContainer game_sprites = loadSprites(game_textures);
 
 	GameData data;
+	data.mode == MODE_GAME;
 	game_init(data);
 	if(!load_assets(data.assets))
 	{
